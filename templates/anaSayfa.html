@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FarMate - Çiftçi Asistanı</title>
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4CAF50',
+            secondary: '#8BC34A'
+          },
+          borderRadius: {
+            button: '8px'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+
+  <!-- Manifest ve Favicon -->
+  <link rel="manifest" href="/static/manifest.json" />
+  <link rel="icon" type="image/png" href="/static/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png" />
+  <meta name="theme-color" content="#4CAF50" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<style>
+
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Poppins', sans-serif;
+background-color: #f8f9fa;
+}
+.search-input:focus {
+outline: none;
+}
+.plant-card:active {
+transform: scale(0.98);
+}
+.disease-card:active {
+transform: scale(0.98);
+}
+.medicine-card:active {
+transform: scale(0.98);
+}
+</style>
+</head>
+<body class="bg-gray-50">
+<!-- Nav Bar -->
+<!-- Nav Bar -->
+<div class="fixed top-0 w-full bg-white shadow-sm z-50">
+  <div class="flex items-center justify-between px-4 py-3">
+    <div class="flex items-center space-x-2">
+     <!--  <div><img src="/static/logo/logo.png" alt="Logo" width="120px" height="90px"></div> -->
+      <span class="text-xl font-semibold text-gray-800">farmate</span>
+    </div>
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 flex items-center justify-center cursor-pointer">
+        <i class="ri-notification-3-line ri-lg text-gray-600"></i>
+      </div>
+      <div class="w-8 h-8 flex items-center justify-center cursor-pointer">
+        <i class="ri-settings-3-line ri-lg text-gray-600"></i>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Main Content -->
+<div class="pt-16 pb-16 px-4">
+<!-- Weather Widget -->
+<div class="bg-gradient-to-r from-primary to-secondary rounded-lg p-4 mb-6 shadow-md">
+<div class="flex justify-between items-center">
+<div class="text-white">
+<p class="text-sm font-medium">Ankara, Türkiye</p>
+<p class="text-2xl font-semibold">24°C</p>
+<p class="text-xs">16 Mayıs 2025, Cuma</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center">
+<i class="ri-sun-line ri-3x text-white"></i>
+</div>
+<p class="text-white text-xs mt-1">Güneşli</p>
+</div>
+</div>
+<div class="flex justify-between mt-4 text-white text-xs">
+<div class="flex flex-col items-center">
+<span>Nem</span>
+<span class="font-medium">45%</span>
+</div>
+<div class="flex flex-col items-center">
+<span>Rüzgar</span>
+<span class="font-medium">12 km/s</span>
+</div>
+<div class="flex flex-col items-center">
+<span>Min</span>
+<span class="font-medium">18°C</span>
+</div>
+<div class="flex flex-col items-center">
+<span>Max</span>
+<span class="font-medium">27°C</span>
+</div>
+</div>
+</div>
+<!-- Search Bar -->
+<div class="relative mb-6">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<i class="ri-search-line text-gray-400"></i>
+</div>
+<input type="text" class="search-input bg-white w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-primary transition-colors" placeholder="Bitki veya hastalık ara...">
+</div>
+<!-- Plant Selection Section -->
+<div class="mb-6">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-lg font-semibold text-gray-800">Bitki Türleri</h2>
+<a href="https://readdy.ai/home/86346ab1-a89e-4c46-bc08-fd47f814f05d/73aa1c2b-d20a-45d4-a539-a24414e7ee7c" data-readdy="true" class="text-primary text-sm cursor-pointer">Tümünü Gör</a>
+</div>
+<div class="grid grid-cols-2 gap-3">
+  <a href="/bitki/bugday" class="plant-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 transition-all duration-200 active:bg-gray-50 flex flex-col items-center p-3">
+    <div class="w-24 h-24 flex items-center justify-center bg-white mb-2">
+      <img src="https://readdy.ai/api/search-image?query=icon%2C%203D%20vector%20illustration%2C%20wheat%20plant%20with%20golden%20grains%2C%20detailed%20stalks%2C%20agricultural%20crop%2C%20the%20icon%20should%20take%20up%2070%25%20of%20the%20frame%2C%20isolated%20on%20white%20background%2C%20centered%20composition%2C%20soft%20lighting%2C%20no%20shadows%2C%20clean%20and%20modern%20look%2C%20single%20object%20focus&width=200&height=200&seq=21&orientation=squarish" alt="Buğday" class="w-full h-full object-contain" />
+    </div>
+    <h3 class="text-sm font-medium text-center">Buğday</h3>
+  </a>
+  <a href="/bitki/arpa" class="plant-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 transition-all duration-200 active:bg-gray-50 flex flex-col items-center p-3">
+    <div class="w-24 h-24 flex items-center justify-center bg-white mb-2">
+      <img src="https://readdy.ai/api/search-image?query=icon%2C%203D%20vector%20illustration%2C%20barley%20plant%20with%20golden%20spikes%2C%20detailed%20stalks%2C%20agricultural%20crop%2C%20the%20icon%20should%20take%20up%2070%25%20of%20the%20frame%2C%20isolated%20on%20white%20background%2C%20centered%20composition%2C%20soft%20lighting%2C%20no%20shadows%2C%20clean%20and%20modern%20look%2C%20single%20object%20focus&width=200&height=200&seq=22&orientation=squarish" alt="Arpa" class="w-full h-full object-contain" />
+    </div>
+    <h3 class="text-sm font-medium text-center">Arpa</h3>
+  </a>
+  <a href="/bitki/misir" class="plant-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 transition-all duration-200 active:bg-gray-50 flex flex-col items-center p-3">
+    <div class="w-24 h-24 flex items-center justify-center bg-white mb-2">
+      <img src="https://readdy.ai/api/search-image?query=icon%2C%203D%20vector%20illustration%2C%20corn%20plant%20with%20golden%20ears%2C%20detailed%20leaves%2C%20agricultural%20crop%2C%20the%20icon%20should%20take%20up%2070%25%20of%20the%20frame%2C%20isolated%20on%20white%20background%2C%20centered%20composition%2C%20soft%20lighting%2C%20no%20shadows%2C%20clean%20and%20modern%20look%2C%20single%20object%20focus&width=200&height=200&seq=23&orientation=squarish" alt="Mısır" class="w-full h-full object-contain" />
+    </div>
+    <h3 class="text-sm font-medium text-center">Mısır</h3>
+  </a>
+  <a href="/bitki/nohut" class="plant-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 transition-all duration-200 active:bg-gray-50 flex flex-col items-center p-3">
+    <div class="w-24 h-24 flex items-center justify-center bg-white mb-2">
+      <img src="https://readdy.ai/api/search-image?query=icon%2C%203D%20vector%20illustration%2C%20chickpea%20plant%20with%20pods%2C%20detailed%20leaves%2C%20agricultural%20crop%2C%20the%20icon%20should%20take%20up%2070%25%20of%20the%20frame%2C%20isolated%20on%20white%20background%2C%20centered%20composition%2C%20soft%20lighting%2C%20no%20shadows%2C%20clean%20and%20modern%20look%2C%20single%20object%20focus&width=200&height=200&seq=24&orientation=squarish" alt="Nohut" class="w-full h-full object-contain" />
+    </div>
+    <h3 class="text-sm font-medium text-center">Nohut</h3>
+  </a>
+  <a href="/bitki/aycicegi" class="plant-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 transition-all duration-200 active:bg-gray-50 flex flex-col items-center p-3">
+    <div class="w-24 h-24 flex items-center justify-center bg-white mb-2">
+      <img src="https://readdy.ai/api/search-image?query=icon%2C%203D%20vector%20illustration%2C%20sunflower%20plant%20with%20bright%20flower%2C%20detailed%20leaves%2C%20agricultural%20crop%2C%20the%20icon%20should%20take%20up%2070%25%20of%20the%20frame%2C%20isolated%20on%20white%20background%2C%20centered%20composition%2C%20soft%20lighting%2C%20no%20shadows%2C%20clean%20and%20modern%20look%2C%20single%20object%20focus&width=200&height=200&seq=25&orientation=squarish" alt="Ayçiçeği" class="w-full h-full object-contain" />
+    </div>
+    <h3 class="text-sm font-medium text-center">Ayçiçeği</h3>
+  </a>
+  <a href="/bitki/pancar" class="plant-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 transition-all duration-200 active:bg-gray-50 flex flex-col items-center p-3">
+    <div class="w-24 h-24 flex items-center justify-center bg-white mb-2">
+      <img src="https://readdy.ai/api/search-image?query=icon%2C%203D%20vector%20illustration%2C%20sugar%20beet%20plant%20with%20large%20root%2C%20detailed%20leaves%2C%20agricultural%20crop%2C%20the%20icon%20should%20take%20up%2070%25%20of%20the%20frame%2C%20isolated%20on%20white%20background%2C%20centered%20composition%2C%20soft%20lighting%2C%20no%20shadows%2C%20clean%20and%20modern%20look%2C%20single%20object%20focus&width=200&height=200&seq=26&orientation=squarish" alt="Pancar" class="w-full h-full object-contain" />
+    </div>
+    <h3 class="text-sm font-medium text-center">Pancar</h3>
+  </a>
+</div>
+</div>
+<!-- Disease Information Section -->
+<div class="mb-6">
+  <div class="flex justify-between items-center mb-4 pl-4">
+    <h2 class="text-lg font-semibold text-gray-800">Domates Hastalıkları</h2>
+    <a href="https://readdy.ai/home/86346ab1-a89e-4c46-bc08-fd47f814f05d/73aa1c2b-d20a-45d4-a539-a24414e7ee7c" data-readdy="true" class="text-primary text-sm cursor-pointer">Tümünü Gör</a>
+  </div>
+  <div class="space-y-3 pl-4 pr-2">
+    <div class="disease-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100">
+      <div class="flex p-3">
+        <div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+          <img src="https://readdy.ai/api/search-image?query=close-up%20photograph%20of%20tomato%20plant%20leaf%20with%20early%20blight%20disease%2C%20showing%20brown%20spots%20with%20concentric%20rings%2C%20detailed%20texture%2C%20isolated%20against%20white%20background%2C%20clear%20symptoms%2C%20plant%20pathology%20reference%20image%2C%20high%20resolution&width=200&height=200&seq=5&orientation=squarish" alt="Erken Yanıklık" class="w-full h-full object-cover">
+        </div>
+        <div class="ml-3 flex-1">
+          <h3 class="font-medium text-gray-800">Erken Yanıklık</h3>
+          <p class="text-xs text-gray-600 line-clamp-2 mt-1">Yapraklarda kahverengi lekeler ve halkalı desenler oluşturan fungal bir hastalıktır.</p>
+          <div class="flex items-center mt-2">
+            <div class="flex-1">
+              <div class="h-1.5 w-full bg-gray-200 rounded-full">
+                <div class="h-1.5 bg-orange-500 rounded-full" style="width: 75%"></div>
+              </div>
+              <span class="text-xs text-gray-500">Şiddet: Yüksek</span>
+            </div>
+            <div class="w-6 h-6 flex items-center justify-center ml-2">
+              <i class="ri-arrow-right-s-line text-primary"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="disease-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100">
+      <div class="flex p-3">
+        <div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+          <img src="https://readdy.ai/api/search-image?query=close-up%20photograph%20of%20tomato%20plant%20leaf%20with%20late%20blight%20disease%2C%20showing%20dark%20brown%20patches%20with%20fuzzy%20white%20mold%2C%20detailed%20texture%2C%20isolated%20against%20white%20background%2C%20clear%20symptoms%2C%20plant%20pathology%20reference%20image%2C%20high%20resolution&width=200&height=200&seq=6&orientation=squarish" alt="Geç Yanıklık" class="w-full h-full object-cover">
+        </div>
+        <div class="ml-3 flex-1">
+          <h3 class="font-medium text-gray-800">Geç Yanıklık</h3>
+          <p class="text-xs text-gray-600 line-clamp-2 mt-1">Yapraklarda koyu kahverengi lekeler ve beyaz küf oluşturan tehlikeli bir hastalıktır.</p>
+          <div class="flex items-center mt-2">
+            <div class="flex-1">
+              <div class="h-1.5 w-full bg-gray-200 rounded-full">
+                <div class="h-1.5 bg-red-500 rounded-full" style="width: 90%"></div>
+              </div>
+              <span class="text-xs text-gray-500">Şiddet: Çok Yüksek</span>
+            </div>
+            <div class="w-6 h-6 flex items-center justify-center ml-2">
+              <i class="ri-arrow-right-s-line text-primary"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Medicine Recommendations Section -->
+<div class="mb-6">
+  <div class="flex justify-between items-center mb-4 pl-4">
+    <h2 class="text-lg font-semibold text-gray-800">İlaç Önerileri</h2>
+    <span class="text-primary text-sm cursor-pointer">Tümünü Gör</span>
+  </div>
+  <div class="overflow-x-auto pb-2 -mx-4 px-4">
+    <div class="flex space-x-3 w-max">
+      <div class="medicine-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 w-40 flex-shrink-0">
+        <div class="h-32 overflow-hidden">
+          <img src="https://readdy.ai/api/search-image?query=professional%20product%20photography%20of%20fungicide%20bottle%20against%20white%20background%2C%20clear%20label%2C%20agricultural%20chemical%2C%20plant%20protection%20product%2C%20high%20quality%20packaging%2C%20clean%20and%20sharp%20image%2C%20commercial%20product%20shot&width=200&height=200&seq=7&orientation=portrait" alt="Mancozel" class="w-full h-full object-cover">
+        </div>
+        <div class="p-3">
+          <h3 class="text-sm font-medium">Mancozel</h3>
+          <div class="flex items-center mt-1">
+            <div class="w-4 h-4 flex items-center justify-center">
+              <i class="ri-medicine-bottle-line text-primary text-xs"></i>
+            </div>
+            <span class="text-xs text-gray-600 ml-1">200g/100L su</span>
+          </div>
+          <div class="flex items-center mt-1">
+            <div class="w-4 h-4 flex items-center justify-center">
+              <i class="ri-time-line text-primary text-xs"></i>
+            </div>
+            <span class="text-xs text-gray-600 ml-1">7-10 gün etki</span>
+          </div>
+        </div>
+      </div>
+      <div class="medicine-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 w-40 flex-shrink-0">
+        <div class="h-32 overflow-hidden">
+          <img src="https://readdy.ai/api/search-image?query=professional%20product%20photography%20of%20fungicide%20spray%20bottle%20against%20white%20background%2C%20clear%20label%2C%20agricultural%20chemical%2C%20plant%20protection%20product%2C%20high%20quality%20packaging%2C%20clean%20and%20sharp%20image%2C%20commercial%20product%20shot&width=200&height=200&seq=8&orientation=portrait" alt="Copperzin" class="w-full h-full object-cover">
+        </div>
+        <div class="p-3">
+          <h3 class="text-sm font-medium">Copperzin</h3>
+          <div class="flex items-center mt-1">
+            <div class="w-4 h-4 flex items-center justify-center">
+              <i class="ri-medicine-bottle-line text-primary text-xs"></i>
+            </div>
+            <span class="text-xs text-gray-600 ml-1">300ml/100L su</span>
+          </div>
+          <div class="flex items-center mt-1">
+            <div class="w-4 h-4 flex items-center justify-center">
+              <i class="ri-time-line text-primary text-xs"></i>
+            </div>
+            <span class="text-xs text-gray-600 ml-1">14 gün etki</span>
+          </div>
+        </div>
+      </div>
+      <div class="medicine-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 w-40 flex-shrink-0">
+        <div class="h-32 overflow-hidden">
+          <img src="https://readdy.ai/api/search-image?query=professional%20product%20photography%20of%20organic%20fungicide%20bottle%20against%20white%20background%2C%20clear%20label%2C%20natural%20plant%20protection%20product%2C%20high%20quality%20packaging%2C%20clean%20and%20sharp%20image%2C%20commercial%20product%20shot&width=200&height=200&seq=9&orientation=portrait" alt="Biofungus" class="w-full h-full object-cover">
+        </div>
+        <div class="p-3" id="biofungusCard">
+          <h3 class="text-sm font-medium">Biofungus</h3>
+          <div class="flex items-center mt-1">
+            <div class="w-4 h-4 flex items-center justify-center">
+              <i class="ri-medicine-bottle-line text-primary text-xs"></i>
+            </div>
+            <span class="text-xs text-gray-600 ml-1">150ml/100L su</span>
+          </div>
+          <div class="flex items-center mt-1">
+            <div class="w-4 h-4 flex items-center justify-center">
+              <i class="ri-time-line text-primary text-xs"></i>
+            </div>
+            <span class="text-xs text-gray-600 ml-1">5-7 gün etki</span>
+          </div>
+        </div>
+        <div id="biofungusDialog" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+          <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[340px] max-h-[80vh] bg-white rounded-lg shadow-xl overflow-y-auto">
+            <div class="p-4">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">Biofungus</h3>
+                <button id="closeBiofungusDialog" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700">
+                  <i class="ri-close-line ri-lg"></i>
+                </button>
+              </div>
+              <div class="space-y-4">
+                <div>
+                  <h4 class="text-sm font-medium text-gray-700 mb-2">Ürün Bilgileri</h4>
+                  <div class="bg-green-50 text-green-700 text-xs px-2 py-1 rounded-full inline-block mb-2">
+                    <i class="ri-leaf-line mr-1"></i>Organik Ürün
+                  </div>
+                  <p class="text-sm text-gray-600">Biofungus, doğal mikroorganizmalar içeren organik bir fungisittir. Bitki hastalıklarına karşı etkili ve çevre dostu bir çözüm sunar.</p>
+                </div>
+                <div>
+                  <h4 class="text-sm font-medium text-gray-700 mb-2">Etken Madde</h4>
+                  <p class="text-sm text-gray-600">Bacillus subtilis (%2), Trichoderma harzianum (%1)</p>
+                </div>
+                <div>
+                  <h4 class="text-sm font-medium text-gray-700 mb-2">Kullanım Alanları</h4>
+                  <ul class="text-sm text-gray-600 list-disc list-inside">
+                    <li>Domates erken yanıklığı</li>
+                    <li>Külleme hastalığı</li>
+                    <li>Kurşuni küf</li>
+                    <li>Mildiyö</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="text-sm font-medium text-gray-700 mb-2">Uygulama Bilgileri</h4>
+                  <div class="space-y-2">
+                    <div class="flex items-center">
+                      <i class="ri-medicine-bottle-line text-primary mr-2"></i>
+                      <span class="text-sm text-gray-600">Dozaj: 150ml/100L su</span>
+                    </div>
+                    <div class="flex items-center">
+                      <i class="ri-time-line text-primary mr-2"></i>
+                      <span class="text-sm text-gray-600">Etki süresi: 5-7 gün</span>
+                    </div>
+                    <div class="flex items-center">
+                      <i class="ri-repeat-line text-primary mr-2"></i>
+                      <span class="text-sm text-gray-600">Uygulama aralığı: 7 gün</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 class="text-sm font-medium text-gray-700 mb-2">Güvenlik Önlemleri</h4>
+                  <ul class="text-sm text-gray-600 list-disc list-inside">
+                    <li>Eldiven ve maske kullanın</li>
+                    <li>Göz temasından kaçının</li>
+                    <li>Çocuklardan uzak tutun</li>
+                    <li>Serin ve kuru yerde saklayın</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="text-sm font-medium text-gray-700 mb-2">Kullanıcı Yorumları</h4>
+                  <div class="space-y-2">
+                    <div class="flex items-start space-x-2">
+                      <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                        <i class="ri-user-line text-gray-500"></i>
+                      </div>
+                      <div>
+                        <p class="text-xs font-medium text-gray-700">Mehmet Yılmaz</p>
+                        <div class="flex items-center">
+                          <i class="ri-star-fill text-yellow-400 text-xs"></i>
+                          <i class="ri-star-fill text-yellow-400 text-xs"></i>
+                          <i class="ri-star-fill text-yellow-400 text-xs"></i>
+                          <i class="ri-star-fill text-yellow-400 text-xs"></i>
+                          <i class="ri-star-fill text-yellow-400 text-xs"></i>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1">Organik olması ve etkili sonuç vermesi çok iyi. Domateslerimdeki hastalığı kısa sürede kontrol altına aldı.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-6 space-y-3">
+                <button id="addToFavorites" class="w-full bg-white border border-primary text-primary font-medium py-2 rounded-button flex items-center justify-center">
+                  <i class="ri-heart-line mr-2"></i>
+                  Favorilere Ekle
+                </button>
+                <button class="w-full bg-primary text-white font-medium py-2 rounded-button flex items-center justify-center">
+                  <i class="ri-shopping-cart-line mr-2"></i>
+                  Satın Al
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Disease Gallery Section -->
+<div class="mt-4 mb-8">
+  <div class="flex justify-between items-center mb-4 pl-4">
+    <h2 class="text-lg font-semibold text-gray-800">Hastalık Görselleri</h2>
+    <span class="text-primary text-sm cursor-pointer">Tümünü Gör</span>
+  </div>
+  <div class="overflow-x-auto pb-2 -mx-4 px-4">
+    <div class="flex space-x-3 w-max">
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 w-56 flex-shrink-0">
+        <div class="h-40 overflow-hidden">
+          <img src="https://readdy.ai/api/search-image?query=close%20up%20detailed%20photograph%20of%20tomato%20plant%20with%20early%20blight%20disease%2C%20showing%20leaf%20symptoms%2C%20brown%20spots%20with%20concentric%20rings%2C%20clear%20disease%20progression%2C%20isolated%20on%20white%20background%2C%20high%20resolution%20plant%20pathology%20reference%20image&width=300&height=200&seq=10&orientation=landscape" alt="Erken Yanıklık Yaprak" class="w-full h-full object-cover">
+        </div>
+        <div class="p-3">
+          <p class="text-xs text-gray-600">Erken yanıklık hastalığının yapraklardaki tipik belirtileri</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 w-56 flex-shrink-0">
+        <div class="h-40 overflow-hidden">
+          <img src="https://readdy.ai/api/search-image?query=close%20up%20detailed%20photograph%20of%20tomato%20fruit%20with%20early%20blight%20disease%2C%20showing%20fruit%20symptoms%2C%20dark%20sunken%20spots%2C%20clear%20disease%20progression%2C%20isolated%20on%20white%20background%2C%20high%20resolution%20plant%20pathology%20reference%20image&width=300&height=200&seq=11&orientation=landscape" alt="Erken Yanıklık Meyve" class="w-full h-full object-cover">
+        </div>
+        <div class="p-3">
+          <p class="text-xs text-gray-600">Erken yanıklık hastalığının meyvedeki belirtileri</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 w-56 flex-shrink-0">
+        <div class="h-40 overflow-hidden">
+          <img src="https://readdy.ai/api/search-image?query=close%20up%20detailed%20photograph%20of%20tomato%20plant%20with%20late%20blight%20disease%2C%20showing%20stem%20symptoms%2C%20dark%20brown%20lesions%2C%20clear%20disease%20progression%2C%20isolated%20on%20white%20background%2C%20high%20resolution%20plant%20pathology%20reference%20image&width=300&height=200&seq=12&orientation=landscape" alt="Geç Yanıklık Gövde" class="w-full h-full object-cover">
+        </div>
+        <div class="p-3">
+          <p class="text-xs text-gray-600">Geç yanıklık hastalığının gövdedeki belirtileri</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- Tab Bar -->
+<div class="fixed bottom-0 w-full bg-white border-t border-gray-200 z-50">
+<div class="grid grid-cols-4 h-16">
+<div class="flex flex-col items-center justify-center cursor-pointer">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-home-5-fill ri-lg text-primary"></i>
+</div>
+<span class="text-xs text-primary mt-1">Ana Sayfa</span>
+</div>
+<a href="https://readdy.ai/home/86346ab1-a89e-4c46-bc08-fd47f814f05d/37bfd909-cc15-46cf-80f4-2e9d2030479f" data-readdy="true" class="flex flex-col items-center justify-center">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-plant-line ri-lg text-gray-500"></i>
+</div>
+<span class="text-xs text-gray-500 mt-1">Bitkilerim</span>
+</a>
+<div class="flex flex-col items-center justify-center cursor-pointer">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-calendar-line ri-lg text-gray-500"></i>
+</div>
+<span class="text-xs text-gray-500 mt-1">Takvim</span>
+</div>
+<div class="flex flex-col items-center justify-center cursor-pointer">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-user-line ri-lg text-gray-500"></i>
+</div>
+<span class="text-xs text-gray-500 mt-1">Profil</span>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+const plantCards = document.querySelectorAll('.plant-card');
+plantCards.forEach(card => {
+card.addEventListener('click', function() {
+// Highlight selected plant
+plantCards.forEach(c => c.classList.remove('border-primary'));
+this.classList.add('border-primary');
+});
+});
+const diseaseCards = document.querySelectorAll('.disease-card');
+diseaseCards.forEach(card => {
+card.addEventListener('click', function() {
+// Show disease details (could expand to show more info)
+this.classList.toggle('border-primary');
+});
+});
+const biofungusCard = document.getElementById('biofungusCard');
+const biofungusDialog = document.getElementById('biofungusDialog');
+const closeBiofungusDialog = document.getElementById('closeBiofungusDialog');
+const addToFavorites = document.getElementById('addToFavorites');
+biofungusCard.addEventListener('click', function() {
+biofungusDialog.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+});
+closeBiofungusDialog.addEventListener('click', function() {
+biofungusDialog.classList.add('hidden');
+document.body.style.overflow = '';
+});
+addToFavorites.addEventListener('click', function() {
+const icon = this.querySelector('i');
+if (icon.classList.contains('ri-heart-line')) {
+icon.classList.replace('ri-heart-line', 'ri-heart-fill');
+this.classList.add('bg-primary', 'text-white');
+this.classList.remove('bg-white', 'text-primary');
+} else {
+icon.classList.replace('ri-heart-fill', 'ri-heart-line');
+this.classList.remove('bg-primary', 'text-white');
+this.classList.add('bg-white', 'text-primary');
+}
+});
+biofungusDialog.addEventListener('click', function(e) {
+if (e.target === this) {
+this.classList.add('hidden');
+document.body.style.overflow = '';
+}
+});
+});
+</script>
+<!-- Hava Durumu Widget'ı için JS -->
+<script>
+// OpenWeatherMap API anahtarını buraya yazdık
+const OPENWEATHER_API_KEY = 'a6d5a4f3356cd42bd0014cb967b5f0e5';
+
+function setWeather(city, temp, desc, icon, humidity, wind, min, max) {
+  document.querySelector('.text-sm.font-medium').textContent = city + ', Türkiye';
+  document.querySelector('.text-2xl.font-semibold').textContent = temp + '°C';
+  document.querySelector('.text-xs.mt-1').textContent = desc;
+  document.querySelector('.ri-sun-line').className = icon + ' ri-3x text-white';
+  // Alt değerler
+  const stats = document.querySelectorAll('.flex.justify-between.mt-4.text-white.text-xs .flex.flex-col.items-center');
+  if(stats.length === 4) {
+    stats[0].querySelector('span.font-medium').textContent = humidity + '%';
+    stats[1].querySelector('span.font-medium').textContent = wind + ' km/s';
+    stats[2].querySelector('span.font-medium').textContent = min + '°C';
+    stats[3].querySelector('span.font-medium').textContent = max + '°C';
+  }
+}
+
+function getWeatherByCoords(lat, lon) {
+  fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=metric&lang=tr`)
+    .then(res => res.json())
+    .then(data => {
+      const iconMap = {
+        'Clear': 'ri-sun-line',
+        'Clouds': 'ri-cloud-line',
+        'Rain': 'ri-rainy-line',
+        'Snow': 'ri-snowy-line',
+        'Thunderstorm': 'ri-thunderstorms-line',
+        'Drizzle': 'ri-drizzle-line',
+        'Mist': 'ri-foggy-line',
+        'Fog': 'ri-foggy-line',
+      };
+      setWeather(
+        data.name,
+        Math.round(data.main.temp),
+        data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1),
+        iconMap[data.weather[0].main] || 'ri-sun-line',
+        data.main.humidity,
+        Math.round(data.wind.speed),
+        Math.round(data.main.temp_min),
+        Math.round(data.main.temp_max)
+      );
+    })
+    .catch(() => setWeather('Ankara', '--', 'Bilinmiyor', 'ri-sun-line', '--', '--', '--', '--'));
+}
+
+function getWeatherByCity(city) {
+  fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OPENWEATHER_API_KEY}&units=metric&lang=tr`)
+    .then(res => res.json())
+    .then(data => {
+      const iconMap = {
+        'Clear': 'ri-sun-line',
+        'Clouds': 'ri-cloud-line',
+        'Rain': 'ri-rainy-line',
+        'Snow': 'ri-snowy-line',
+        'Thunderstorm': 'ri-thunderstorms-line',
+        'Drizzle': 'ri-drizzle-line',
+        'Mist': 'ri-foggy-line',
+        'Fog': 'ri-foggy-line',
+      };
+      setWeather(
+        data.name,
+        Math.round(data.main.temp),
+        data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1),
+        iconMap[data.weather[0].main] || 'ri-sun-line',
+        data.main.humidity,
+        Math.round(data.wind.speed),
+        Math.round(data.main.temp_min),
+        Math.round(data.main.temp_max)
+      );
+    })
+    .catch(() => setWeather('Ankara', '--', 'Bilinmiyor', 'ri-sun-line', '--', '--', '--', '--'));
+}
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    pos => getWeatherByCoords(pos.coords.latitude, pos.coords.longitude),
+    err => getWeatherByCity('Ankara'),
+    {timeout: 5000}
+  );
+} else {
+  getWeatherByCity('Ankara');
+}
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/static/service-worker.js')
+      .then(() => console.log("Service Worker kayıt edildi"))
+      .catch((error) => console.log("Service Worker hatası:", error));
+  }
+</script>
+
+</body>
+</html>

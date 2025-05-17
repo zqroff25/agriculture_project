@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ bitki.isim }} Detayları</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#16a34a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Geri Dön Butonu -->
+    <div class="p-4">
+        <a href="/" class="inline-flex items-center text-primary font-medium"><i class="ri-arrow-left-line mr-2"></i> Ana Sayfa</a>
+    </div>
+    <!-- Bitki Başlığı ve Görseli -->
+    <div class="flex flex-col items-center mt-2 mb-6">
+        <img src="{{ bitki.gorsel }}" alt="{{ bitki.isim }}" class="w-32 h-32 object-cover rounded-lg shadow-md mb-2">
+        <h1 class="text-2xl font-bold text-gray-800">{{ bitki.isim }}</h1>
+    </div>
+    <!-- Hastalıklar Bölümü -->
+    <div class="max-w-4xl mx-auto px-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-6 ml-4">Hastalıklar</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for hastalik in bitki.hastaliklar[:10] %}
+            <div class="bg-white rounded-lg shadow p-4">
+                <div class="flex items-center mb-3">
+                    <img src="/static/sariPas.png" alt="{{ hastalik.isim }}" class="w-20 h-20 object-cover rounded-lg mr-4">
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-800">{{ hastalik.isim }}</h3>
+                        <p class="text-sm text-gray-600 mt-1">{{ hastalik.aciklama }}</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-primary mb-2">Önerilen İlaçlar</h4>
+                    <div class="flex flex-wrap gap-4">
+                        {% for ilac in hastalik.ilaclar %}
+                        <div class="flex flex-col items-center bg-gray-50 rounded-lg p-2 w-28 shadow-sm">
+                            <img src="{{ ilac.gorsel }}" alt="{{ ilac.isim }}" class="w-12 h-12 object-contain mb-1">
+                            <span class="text-xs font-medium text-gray-800">{{ ilac.isim }}</span>
+                            <span class="text-[10px] text-gray-500">{{ ilac.aktif_madde }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-6 mb-8">
+            <a href="https://bku.tarimorman.gov.tr/Arama/Index?BitkiAdi={{ bitki.isim }}" target="_blank"
+               class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-green-700 transition duration-300 font-semibold text-base">
+                Tümünü Gör
+            </a>
+        </div>
+    </div>
+</body>
+</html> 

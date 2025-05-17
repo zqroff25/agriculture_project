@@ -1,0 +1,47 @@
+{
+  "isim": "Ayçiçeği",
+  "gorsel": "https://readdy.ai/api/search-image?query=icon%2C%203D%20vector%20illustration%2C%20sunflower%20plant%20with%20bright%20flower%2C%20detailed%20leaves%2C%20agricultural%20crop%2C%20the%20icon%20should%20take%20up%2070%25%20of%20the%20frame%2C%20isolated%20on%20white%20background%2C%20centered%20composition%2C%20soft%20lighting%2C%20no%20shadows%2C%20clean%20and%20modern%20look%2C%20single%20object%20focus&width=200&height=200&seq=25&orientation=squarish",
+  "hastaliklar": [
+    {
+      "isim": "Sarı Pas (Puccinia striiformis)",
+      "aciklama": "Ayçiçeği yapraklarda sarımsı çizgiler ve lekeler oluşturan, verim kaybına yol açan bir mantar hastalığıdır.",
+      "gorsel": "static/sariPas.png",
+      "ilaclar": [
+        {
+          "isim": "Tilt 250 EC",
+          "aktif_madde": "Propikonazol",
+          "gorsel": "/static/ilac.jpg"
+        },
+        {
+          "isim": "Folicur",
+          "aktif_madde": "Tebuconazole",
+          "gorsel": "/static/ilac.jpg"
+        }
+      ]
+    },
+    {
+      "isim": "Kök Çürüklüğü (Fusarium spp.)",
+      "aciklama": "Kök ve kök boğazında kahverengi çürüklükler oluşturan, bitkinin gelişimini engelleyen bir hastalıktır.",
+      "gorsel": "https://www.plantwise.org/KnowledgeBank/ImageShow?imgid=28538",
+      "ilaclar": [
+        {
+          "isim": "Amistar",
+          "aktif_madde": "Azoxystrobin",
+          "gorsel": "/static/ilac.jpg"
+        }
+      ]
+    },
+    {
+      "isim": "Kahverengi Pas (Puccinia triticina)",
+      "aciklama": "Yapraklarda kahverengi, tozlu püstüller oluşturan, yaygın bir buğday hastalığıdır.",
+      "gorsel": "https://www.plantwise.org/KnowledgeBank/ImageShow?imgid=28537",
+      "ilaclar": [
+        {
+          "isim": "Rex Duo",
+          "aktif_madde": "Epoxiconazole + Fenpropimorph",
+          "gorsel": "/static/ilac.jpg"
+        }
+      ]
+    }
+  ]
+} 
