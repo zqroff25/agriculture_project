@@ -2,8 +2,7 @@ const CACHE_NAME = 'farmate-cache-v2';
 const urlsToCache = [
   '/',
   '/static/manifest.json',
-  '/static/icons/logo-192.png',
-  '/static/icons/logo-512.png',
+  '/static/favicon-192.png',
   '/templates/anaSayfa.html',
   'https://cdn.tailwindcss.com/3.4.16',
   'https://fonts.googleapis.com/css2?family=Pacifico&display=swap',
