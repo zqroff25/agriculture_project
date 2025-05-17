@@ -3,45 +3,154 @@
   "gorsel": "https://readdy.ai/api/search-image?query=icon%2C%203D%20vector%20illustration%2C%20wheat%20plant%20with%20golden%20grains%2C%20detailed%20stalks%2C%20agricultural%20crop%2C%20the%20icon%20should%20take%20up%2070%25%20of%20the%20frame%2C%20isolated%20on%20white%20background%2C%20centered%20composition%2C%20soft%20lighting%2C%20no%20shadows%2C%20clean%20and%20modern%20look%2C%20single%20object%20focus&width=200&height=200&seq=21&orientation=squarish",
   "hastaliklar": [
     {
-      "isim": "Sarı Pas (Puccinia striiformis)",
-      "aciklama": "Buğdayda yapraklarda sarımsı çizgiler ve lekeler oluşturan, verim kaybına yol açan bir mantar hastalığıdır.",
-      "gorsel": "/static/sariPas.png",
-      "ilaclar": [
-        {
-          "isim": "Tilt 250 EC",
-          "aktif_madde": "Propikonazol",
-          "gorsel": "/static/ilac.jpg"
-        },
-        {
-          "isim": "Folicur",
-          "aktif_madde": "Tebuconazole",
-          "gorsel": "/static/ilac.jpg"
-        }
-      ]
+      "isim": "Sarı Pas (Fungusit)",
+      "aciklama": "Yapraklarda sarı, dar ve uzun çizgiler şeklinde püstüller. Fotosentezi azaltarak verim kaybına neden olur.",
+      "gorsel": "",
+      "ilaclar": []
     },
     {
-      "isim": "Kök Çürüklüğü (Fusarium spp.)",
-      "aciklama": "Kök ve kök boğazında kahverengi çürüklükler oluşturan, bitkinin gelişimini engelleyen bir hastalıktır.",
-      "gorsel": "https://www.plantwise.org/KnowledgeBank/ImageShow?imgid=28538",
-      "ilaclar": [
-        {
-          "isim": "Amistar",
-          "aktif_madde": "Azoxystrobin",
-          "gorsel": "/static/ilac.jpg"
-        }
-      ]
+      "isim": "Kahverengi Pas (Fungusit)",
+      "aciklama": "Yapraklarda düzensiz dağılmış kahverengi püstüller. Yaprak yüzeyinde yaygınlaşarak bitkinin zayıflamasına yol açar.",
+      "gorsel": "",
+      "ilaclar": []
     },
     {
-      "isim": "Kahverengi Pas (Puccinia triticina)",
-      "aciklama": "Yapraklarda kahverengi, tozlu püstüller oluşturan, yaygın bir buğday hastalığıdır.",
-      "gorsel": "https://www.plantwise.org/KnowledgeBank/ImageShow?imgid=28537",
-      "ilaclar": [
-        {
-          "isim": "Rex Duo",
-          "aktif_madde": "Epoxiconazole + Fenpropimorph",
-          "gorsel": "/static/ilac.jpg"
-        }
-      ]
+      "isim": "Kara Pas (Fungusit)",
+      "aciklama": "Sap ve yapraklarda koyu renkli, uzun püstüller. Sapın zayıflamasına ve yatmaya neden olur.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Sürme (Fungusit)",
+      "aciklama": "Başaklarda mavimsi-yeşil renk ve tanelerde balık kokusu. Tanelerin içi siyah sporlarla dolarak kaliteyi düşürür.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Rastık (Fungusit)",
+      "aciklama": "Başaklarda siyah toz yığını şeklinde sporlar. Tohumla bulaşarak yeni bitkileri enfekte eder.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Külleme (Fungusit)",
+      "aciklama": "Yaprakların üst yüzeyinde beyaz, tozlu mantar tabakası. Fotosentezi engelleyerek bitkinin gelişimini yavaşlatır.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Septoria Yaprak Lekesi (Fungusit)",
+      "aciklama": "Yapraklarda sarı haleli kahverengi lekeler. Yaprakların erken kurumasına ve verim kaybına neden olur.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Fusarium Başak Çürüklüğü (Fungusit)",
+      "aciklama": "Başaklarda beyazlaşma ve tanelerde büzülme. Tanelerin kalitesini düşürür ve mikotoksin üretimiyle sağlık riskleri oluşturur.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Kök ve Kökboğazı Çürüklüğü (Fungusit)",
+      "aciklama": "Kök ve kök boğazında kahverengi çürüklükler. Bitkinin besin alımını engelleyerek gelişimini durdurur.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Yabani Hardal (Herbisit)",
+      "aciklama": "Buğdayla besin ve su rekabetine girerek verimi düşürür.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Yabani Yulaf (Herbisit)",
+      "aciklama": "Hızlı gelişimiyle buğdayı gölgeler ve besin rekabetine girer.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Tilki Kuyruğu (Herbisit)",
+      "aciklama": "Yoğunluğu arttıkça buğday verimini ciddi oranda azaltır.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Delice (Herbisit)",
+      "aciklama": "Buğdayla benzer morfolojiye sahip olup, ayrımı ve mücadelesi zordur.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Çobançantası (Herbisit)",
+      "aciklama": "Hızlı çoğalır ve buğdayla rekabete girerek verimi düşürür.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Gelincik (Herbisit)",
+      "aciklama": "Tarlada yoğunlaştığında buğdayın gelişimini engeller.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Yabani Turp (Herbisit)",
+      "aciklama": "Buğdayla besin ve su rekabetine girerek verimi azaltır.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Köygöçüren (Herbisit)",
+      "aciklama": "Derin kök sistemiyle buğdayın su ve besin alımını engeller.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Tarla Sarmaşığı (Herbisit)",
+      "aciklama": "Sarmaşık yapısıyla buğdayı sarar ve gelişimini engeller.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Ballıbaba (Herbisit)",
+      "aciklama": "Hızlı yayılımıyla buğdayın gelişimini olumsuz etkiler.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Süne (İnsektisit)",
+      "aciklama": "Buğdayın en önemli zararlılarından biridir. Kardeşlenme döneminde sapları emerek 'kurtboğazı', başak döneminde ise taneleri emerek 'akbaşak' zararı oluşturur.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Kımıl (İnsektisit)",
+      "aciklama": "Süneye benzer yapıda, taneleri emerek kalite kaybına neden olur.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Ekin Kambur Böceği (İnsektisit)",
+      "aciklama": "Larvalar toprak altında kökleri kemirir; erginler ise başaklarda taneleri yer.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Ekin Bambul Böceği (İnsektisit)",
+      "aciklama": "Süt olum döneminde başaklarda taneleri kemirerek zarar verir.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Hububat Yaprak Bitleri (İnsektisit)",
+      "aciklama": "Bitki özsuyunu emerek zayıflatır, ayrıca virüs hastalıklarının taşınmasına neden olur.",
+      "gorsel": "",
+      "ilaclar": []
+    },
+    {
+      "isim": "Thrips (İnsektisit)",
+      "aciklama": "Yaprak ve başaklarda beslenerek zarar verirler.",
+      "gorsel": "",
+      "ilaclar": []
     }
   ]
-} 
+}
