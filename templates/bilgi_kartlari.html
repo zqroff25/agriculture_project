@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilgi Kartları - FarMate</title>
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4CAF50',
+                        secondary: '#8BC34A'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <!-- Nav Bar -->
+    <div class="fixed top-0 w-full bg-white shadow-sm z-50">
+        <div class="flex items-center justify-between px-4 py-3">
+            <div class="flex items-center space-x-2">
+                <a href="/" class="text-xl font-semibold text-gray-800">farmate</a>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 flex items-center justify-center cursor-pointer">
+                    <i class="ri-notification-3-line ri-lg text-gray-600"></i>
+                </div>
+                <div class="w-8 h-8 flex items-center justify-center cursor-pointer">
+                    <i class="ri-settings-3-line ri-lg text-gray-600"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ana İçerik -->
+    <div class="pt-16 pb-16 px-4">
+        <!-- Geri Butonu -->
+        <div class="mb-6">
+            <a href="/" class="inline-flex items-center text-gray-600 hover:text-primary transition-colors">
+                <i class="ri-arrow-left-line mr-2"></i>
+                Ana Sayfaya Dön
+            </a>
+        </div>
+        <div class="max-w-7xl mx-auto">
+            <!-- Başlık -->
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-gray-800">Bunları Biliyor Musunuz?</h1>
+                <p class="text-gray-600 mt-2">Tarım dünyasından ilginç bilgiler ve güncel gelişmeler</p>
+            </div>
+
+            <!-- Kartlar Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Buğday Hastalıkları -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="ri-wheat-line text-2xl text-primary mr-3"></i>
+                            <h3 class="text-xl font-semibold text-gray-800">Buğday Hastalıkları</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">
+                            Türkiye'de buğdayda en çok karşılaşılan hastalık Sarı Pas'tır. Özellikle nemli ve ılık geçen bahar aylarında yaygınlaşır. Erken teşhis ve doğru ilaçlama zamanlaması verim kaybını önemli ölçüde azaltır.
+                        </p>
+                        <div class="mt-4">
+                            <h4 class="font-medium text-gray-800 mb-2">Önemli Noktalar:</h4>
+                            <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                <li>Hastalık belirtileri yapraklarda sarı-turuncu lekeler şeklinde görülür</li>
+                                <li>Nemli hava koşullarında hızla yayılır</li>
+                                <li>Erken dönemde müdahale edilmesi kritik önem taşır</li>
+                            </ul>
+                        </div>
+                        <a href="/bilgi/bugday-hastaliklari" class="mt-4 text-primary hover:text-primary-dark font-medium inline-flex items-center">
+                            Detaylı Bilgi
+                            <i class="ri-arrow-right-line ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tarım İstatistikleri -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="ri-bar-chart-line text-2xl text-primary mr-3"></i>
+                            <h3 class="text-xl font-semibold text-gray-800">Tarım İstatistikleri</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">
+                            Türkiye, dünyanın en büyük buğday üreticileri arasında yer alıyor. 2023 yılında yaklaşık 20 milyon ton buğday üretimi gerçekleştirildi. Verim artışı için modern tarım tekniklerinin kullanımı önem taşıyor.
+                        </p>
+                        <div class="mt-4">
+                            <h4 class="font-medium text-gray-800 mb-2">2023 Yılı Verileri:</h4>
+                            <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                <li>Toplam buğday üretimi: 20 milyon ton</li>
+                                <li>Ekili alan: 7.5 milyon hektar</li>
+                                <li>Ortalama verim: 2.67 ton/hektar</li>
+                            </ul>
+                        </div>
+                        <a href="/bilgi/tarim-istatistikleri" class="mt-4 text-primary hover:text-primary-dark font-medium inline-flex items-center">
+                            Detaylı Bilgi
+                            <i class="ri-arrow-right-line ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- İklim Değişikliği -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="ri-sun-cloudy-line text-2xl text-primary mr-3"></i>
+                            <h3 class="text-xl font-semibold text-gray-800">İklim Değişikliği</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">
+                            İklim değişikliği tarımsal üretimi doğrudan etkiliyor. Kuraklığa dayanıklı çeşitlerin kullanımı ve su tasarruflu sulama sistemleri, gelecekteki üretim için kritik öneme sahip.
+                        </p>
+                        <div class="mt-4">
+                            <h4 class="font-medium text-gray-800 mb-2">Alınması Gereken Önlemler:</h4>
+                            <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                <li>Kuraklığa dayanıklı çeşitlerin kullanımı</li>
+                                <li>Su tasarruflu sulama sistemleri</li>
+                                <li>Toprak nemini koruyan tarım teknikleri</li>
+                            </ul>
+                        </div>
+                        <a href="/bilgi/iklim-degisikligi" class="mt-4 text-primary hover:text-primary-dark font-medium inline-flex items-center">
+                            Detaylı Bilgi
+                            <i class="ri-arrow-right-line ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Akıllı Tarım -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="ri-smartphone-line text-2xl text-primary mr-3"></i>
+                            <h3 class="text-xl font-semibold text-gray-800">Akıllı Tarım</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">
+                            Drone teknolojisi ve yapay zeka destekli hastalık tespiti, modern tarımın vazgeçilmez parçaları haline geliyor. Bu teknolojiler sayesinde erken uyarı sistemleri daha etkili hale geliyor.
+                        </p>
+                        <div class="mt-4">
+                            <h4 class="font-medium text-gray-800 mb-2">Modern Teknolojiler:</h4>
+                            <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                <li>Drone ile ilaçlama ve gözlem</li>
+                                <li>Yapay zeka destekli hastalık tespiti</li>
+                                <li>IoT sensörleri ile toprak analizi</li>
+                            </ul>
+                        </div>
+                        <a href="/bilgi/akilli-tarim" class="mt-4 text-primary hover:text-primary-dark font-medium inline-flex items-center">
+                            Detaylı Bilgi
+                            <i class="ri-arrow-right-line ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Organik Tarım -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="ri-leaf-line text-2xl text-primary mr-3"></i>
+                            <h3 class="text-xl font-semibold text-gray-800">Organik Tarım</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">
+                            Türkiye'de organik tarım alanları her geçen yıl artıyor. 2023 yılında organik tarım yapılan alan 500 bin hektarı aştı. Bu artış, sürdürülebilir tarım uygulamalarının yaygınlaştığını gösteriyor.
+                        </p>
+                        <div class="mt-4">
+                            <h4 class="font-medium text-gray-800 mb-2">Organik Tarımın Avantajları:</h4>
+                            <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                <li>Çevre dostu üretim</li>
+                                <li>Daha yüksek ürün değeri</li>
+                                <li>Sürdürülebilir tarım</li>
+                            </ul>
+                        </div>
+                        <a href="/bilgi/organik-tarim" class="mt-4 text-primary hover:text-primary-dark font-medium inline-flex items-center">
+                            Detaylı Bilgi
+                            <i class="ri-arrow-right-line ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tarım Teknolojileri -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="ri-robot-line text-2xl text-primary mr-3"></i>
+                            <h3 class="text-xl font-semibold text-gray-800">Tarım Teknolojileri</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">
+                            Sensör teknolojileri ve IoT cihazları sayesinde toprak nemi, sıcaklık ve besin değerleri anlık olarak takip edilebiliyor. Bu veriler, sulama ve gübreleme zamanlamasını optimize ediyor.
+                        </p>
+                        <div class="mt-4">
+                            <h4 class="font-medium text-gray-800 mb-2">Kullanılan Teknolojiler:</h4>
+                            <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                <li>Toprak sensörleri</li>
+                                <li>Otomatik sulama sistemleri</li>
+                                <li>Mobil uygulamalar</li>
+                            </ul>
+                        </div>
+                        <a href="/bilgi/tarim-teknolojileri" class="mt-4 text-primary hover:text-primary-dark font-medium inline-flex items-center">
+                            Detaylı Bilgi
+                            <i class="ri-arrow-right-line ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="fixed bottom-0 w-full bg-white border-t border-gray-200 z-50">
+        <div class="grid grid-cols-4 h-16">
+            <a href="/" class="flex flex-col items-center justify-center">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-home-5-line ri-lg text-gray-500"></i>
+                </div>
+                <span class="text-xs text-gray-500 mt-1">Ana Sayfa</span>
+            </a>
+            <a href="/bitkilerim" class="flex flex-col items-center justify-center">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-plant-line ri-lg text-gray-500"></i>
+                </div>
+                <span class="text-xs text-gray-500 mt-1">Bitkilerim</span>
+            </a>
+            <a href="/takvim" class="flex flex-col items-center justify-center">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-calendar-line ri-lg text-gray-500"></i>
+                </div>
+                <span class="text-xs text-gray-500 mt-1">Takvim</span>
+            </a>
+            <a href="/profil" class="flex flex-col items-center justify-center">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-user-line ri-lg text-gray-500"></i>
+                </div>
+                <span class="text-xs text-gray-500 mt-1">Profil</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html> 

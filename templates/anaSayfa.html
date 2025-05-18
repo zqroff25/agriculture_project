@@ -116,10 +116,69 @@ transform: scale(0.98);
 </div>
 <!-- Search Bar -->
 <div class="relative mb-6">
-<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-<i class="ri-search-line text-gray-400"></i>
-</div>
-<input type="text" class="search-input bg-white w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-primary transition-colors" placeholder="Bitki veya hastalık ara...">
+    <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="ri-search-line text-gray-400"></i>
+        </div>
+        <input type="text" 
+               id="searchInput"
+               class="search-input bg-white w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-primary transition-colors" 
+               placeholder="Bitki, hastalık veya ilaç türü ara..."
+               autocomplete="off">
+        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+            <button id="searchFilterBtn" class="text-gray-400 hover:text-primary">
+                <i class="ri-filter-3-line"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Arama Filtreleri -->
+    <div id="searchFilters" class="hidden mt-2 bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+        <div class="space-y-3">
+            <h3 class="text-sm font-medium text-gray-700">Kategoriler</h3>
+            <div class="flex flex-wrap gap-2">
+                <label class="inline-flex items-center">
+                    <input type="checkbox" class="form-checkbox text-primary" value="bitki" checked>
+                    <span class="ml-2 text-sm text-gray-600">Bitkiler</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="checkbox" class="form-checkbox text-primary" value="hastalik" checked>
+                    <span class="ml-2 text-sm text-gray-600">Hastalıklar</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="checkbox" class="form-checkbox text-primary" value="ilac" checked>
+                    <span class="ml-2 text-sm text-gray-600">İlaç Türleri</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Arama Sonuçları -->
+    <div id="searchResults" class="hidden absolute z-50 w-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto">
+        <!-- Popüler Aramalar -->
+        <div class="p-4 border-b border-gray-200">
+            <h3 class="text-sm font-medium text-gray-700 mb-2">Popüler Aramalar</h3>
+            <div class="flex flex-wrap gap-2">
+                <button class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full hover:bg-primary hover:text-white transition-colors">
+                    Sarı Pas
+                </button>
+                <button class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full hover:bg-primary hover:text-white transition-colors">
+                    Süne
+                </button>
+                <button class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full hover:bg-primary hover:text-white transition-colors">
+                    Pancar
+                </button>
+                <button class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full hover:bg-primary hover:text-white transition-colors">
+                    Fungisit
+                </button>
+            </div>
+        </div>
+
+        <!-- Arama Sonuçları Listesi -->
+        <div id="searchResultsList" class="divide-y divide-gray-200">
+            <!-- Sonuçlar JavaScript ile doldurulacak -->
+        </div>
+    </div>
 </div>
 <!-- Plant Selection Section -->
 <div class="mb-6">
@@ -165,6 +224,48 @@ transform: scale(0.98);
     <h3 class="text-sm font-medium text-center">Pancar</h3>
   </a>
 </div>
+</div>
+<!-- Bunları Biliyor Musunuz? Bölümü -->
+<div class="mb-6">
+  <div class="flex justify-between items-center mb-4 pl-4">
+    <h2 class="text-lg font-semibold text-gray-800">Bunları Biliyor Musunuz?</h2>
+    <a href="/bilgi-kartlari" class="text-primary text-sm cursor-pointer">Tümünü Gör</a>
+  </div>
+  <div class="overflow-x-auto pb-2 -mx-4 px-4">
+    <div class="flex space-x-3 w-max">
+        {% for kart in bilgi_kartlari %}
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 w-72 flex-shrink-0">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    {% if kart.link == 'bugday-hastaliklari' %}
+                        <i class="ri-wheat-line text-2xl text-primary mr-3"></i>
+                    {% elif kart.link == 'tarim-istatistikleri' %}
+                        <i class="ri-bar-chart-line text-2xl text-primary mr-3"></i>
+                    {% elif kart.link == 'iklim-degisikligi' %}
+                        <i class="ri-sun-cloudy-line text-2xl text-primary mr-3"></i>
+                    {% elif kart.link == 'akilli-tarim' %}
+                        <i class="ri-smartphone-line text-2xl text-primary mr-3"></i>
+                    {% elif kart.link == 'organik-tarim' %}
+                        <i class="ri-leaf-line text-2xl text-primary mr-3"></i>
+                    {% elif kart.link == 'tarim-teknolojileri' %}
+                        <i class="ri-robot-line text-2xl text-primary mr-3"></i>
+                    {% endif %}
+                    <h3 class="text-xl font-semibold text-gray-800">{{ kart.baslik }}</h3>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    {{ kart.aciklama }}
+                </p>
+                <div class="flex justify-between items-center mt-4">
+                    <span class="text-sm text-gray-500">{{ kart.tarih }}</span>
+                    <a href="/bilgi/{{ kart.link }}" class="text-primary hover:text-primary-dark text-sm font-medium">
+                        İncele <i class="ri-arrow-right-line ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+  </div>
 </div>
 <!-- Disease Information Section -->
 <div class="mb-6">
@@ -219,203 +320,6 @@ transform: scale(0.98);
     </div>
   </div>
 </div>
-<!-- Medicine Recommendations Section -->
-<div class="mb-6">
-  <div class="flex justify-between items-center mb-4 pl-4">
-    <h2 class="text-lg font-semibold text-gray-800">İlaç Önerileri</h2>
-    <span class="text-primary text-sm cursor-pointer">Tümünü Gör</span>
-  </div>
-  <div class="overflow-x-auto pb-2 -mx-4 px-4">
-    <div class="flex space-x-3 w-max">
-      <div class="medicine-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 w-40 flex-shrink-0">
-        <div class="h-32 overflow-hidden">
-          <img src="https://readdy.ai/api/search-image?query=professional%20product%20photography%20of%20fungicide%20bottle%20against%20white%20background%2C%20clear%20label%2C%20agricultural%20chemical%2C%20plant%20protection%20product%2C%20high%20quality%20packaging%2C%20clean%20and%20sharp%20image%2C%20commercial%20product%20shot&width=200&height=200&seq=7&orientation=portrait" alt="Mancozel" class="w-full h-full object-cover">
-        </div>
-        <div class="p-3">
-          <h3 class="text-sm font-medium">Mancozel</h3>
-          <div class="flex items-center mt-1">
-            <div class="w-4 h-4 flex items-center justify-center">
-              <i class="ri-medicine-bottle-line text-primary text-xs"></i>
-            </div>
-            <span class="text-xs text-gray-600 ml-1">200g/100L su</span>
-          </div>
-          <div class="flex items-center mt-1">
-            <div class="w-4 h-4 flex items-center justify-center">
-              <i class="ri-time-line text-primary text-xs"></i>
-            </div>
-            <span class="text-xs text-gray-600 ml-1">7-10 gün etki</span>
-          </div>
-        </div>
-      </div>
-      <div class="medicine-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 w-40 flex-shrink-0">
-        <div class="h-32 overflow-hidden">
-          <img src="https://readdy.ai/api/search-image?query=professional%20product%20photography%20of%20fungicide%20spray%20bottle%20against%20white%20background%2C%20clear%20label%2C%20agricultural%20chemical%2C%20plant%20protection%20product%2C%20high%20quality%20packaging%2C%20clean%20and%20sharp%20image%2C%20commercial%20product%20shot&width=200&height=200&seq=8&orientation=portrait" alt="Copperzin" class="w-full h-full object-cover">
-        </div>
-        <div class="p-3">
-          <h3 class="text-sm font-medium">Copperzin</h3>
-          <div class="flex items-center mt-1">
-            <div class="w-4 h-4 flex items-center justify-center">
-              <i class="ri-medicine-bottle-line text-primary text-xs"></i>
-            </div>
-            <span class="text-xs text-gray-600 ml-1">300ml/100L su</span>
-          </div>
-          <div class="flex items-center mt-1">
-            <div class="w-4 h-4 flex items-center justify-center">
-              <i class="ri-time-line text-primary text-xs"></i>
-            </div>
-            <span class="text-xs text-gray-600 ml-1">14 gün etki</span>
-          </div>
-        </div>
-      </div>
-      <div class="medicine-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 w-40 flex-shrink-0">
-        <div class="h-32 overflow-hidden">
-          <img src="https://readdy.ai/api/search-image?query=professional%20product%20photography%20of%20organic%20fungicide%20bottle%20against%20white%20background%2C%20clear%20label%2C%20natural%20plant%20protection%20product%2C%20high%20quality%20packaging%2C%20clean%20and%20sharp%20image%2C%20commercial%20product%20shot&width=200&height=200&seq=9&orientation=portrait" alt="Biofungus" class="w-full h-full object-cover">
-        </div>
-        <div class="p-3" id="biofungusCard">
-          <h3 class="text-sm font-medium">Biofungus</h3>
-          <div class="flex items-center mt-1">
-            <div class="w-4 h-4 flex items-center justify-center">
-              <i class="ri-medicine-bottle-line text-primary text-xs"></i>
-            </div>
-            <span class="text-xs text-gray-600 ml-1">150ml/100L su</span>
-          </div>
-          <div class="flex items-center mt-1">
-            <div class="w-4 h-4 flex items-center justify-center">
-              <i class="ri-time-line text-primary text-xs"></i>
-            </div>
-            <span class="text-xs text-gray-600 ml-1">5-7 gün etki</span>
-          </div>
-        </div>
-        <div id="biofungusDialog" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-          <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[340px] max-h-[80vh] bg-white rounded-lg shadow-xl overflow-y-auto">
-            <div class="p-4">
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-gray-800">Biofungus</h3>
-                <button id="closeBiofungusDialog" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700">
-                  <i class="ri-close-line ri-lg"></i>
-                </button>
-              </div>
-              <div class="space-y-4">
-                <div>
-                  <h4 class="text-sm font-medium text-gray-700 mb-2">Ürün Bilgileri</h4>
-                  <div class="bg-green-50 text-green-700 text-xs px-2 py-1 rounded-full inline-block mb-2">
-                    <i class="ri-leaf-line mr-1"></i>Organik Ürün
-                  </div>
-                  <p class="text-sm text-gray-600">Biofungus, doğal mikroorganizmalar içeren organik bir fungisittir. Bitki hastalıklarına karşı etkili ve çevre dostu bir çözüm sunar.</p>
-                </div>
-                <div>
-                  <h4 class="text-sm font-medium text-gray-700 mb-2">Etken Madde</h4>
-                  <p class="text-sm text-gray-600">Bacillus subtilis (%2), Trichoderma harzianum (%1)</p>
-                </div>
-                <div>
-                  <h4 class="text-sm font-medium text-gray-700 mb-2">Kullanım Alanları</h4>
-                  <ul class="text-sm text-gray-600 list-disc list-inside">
-                    <li>Domates erken yanıklığı</li>
-                    <li>Külleme hastalığı</li>
-                    <li>Kurşuni küf</li>
-                    <li>Mildiyö</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 class="text-sm font-medium text-gray-700 mb-2">Uygulama Bilgileri</h4>
-                  <div class="space-y-2">
-                    <div class="flex items-center">
-                      <i class="ri-medicine-bottle-line text-primary mr-2"></i>
-                      <span class="text-sm text-gray-600">Dozaj: 150ml/100L su</span>
-                    </div>
-                    <div class="flex items-center">
-                      <i class="ri-time-line text-primary mr-2"></i>
-                      <span class="text-sm text-gray-600">Etki süresi: 5-7 gün</span>
-                    </div>
-                    <div class="flex items-center">
-                      <i class="ri-repeat-line text-primary mr-2"></i>
-                      <span class="text-sm text-gray-600">Uygulama aralığı: 7 gün</span>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h4 class="text-sm font-medium text-gray-700 mb-2">Güvenlik Önlemleri</h4>
-                  <ul class="text-sm text-gray-600 list-disc list-inside">
-                    <li>Eldiven ve maske kullanın</li>
-                    <li>Göz temasından kaçının</li>
-                    <li>Çocuklardan uzak tutun</li>
-                    <li>Serin ve kuru yerde saklayın</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 class="text-sm font-medium text-gray-700 mb-2">Kullanıcı Yorumları</h4>
-                  <div class="space-y-2">
-                    <div class="flex items-start space-x-2">
-                      <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                        <i class="ri-user-line text-gray-500"></i>
-                      </div>
-                      <div>
-                        <p class="text-xs font-medium text-gray-700">Mehmet Yılmaz</p>
-                        <div class="flex items-center">
-                          <i class="ri-star-fill text-yellow-400 text-xs"></i>
-                          <i class="ri-star-fill text-yellow-400 text-xs"></i>
-                          <i class="ri-star-fill text-yellow-400 text-xs"></i>
-                          <i class="ri-star-fill text-yellow-400 text-xs"></i>
-                          <i class="ri-star-fill text-yellow-400 text-xs"></i>
-                        </div>
-                        <p class="text-xs text-gray-600 mt-1">Organik olması ve etkili sonuç vermesi çok iyi. Domateslerimdeki hastalığı kısa sürede kontrol altına aldı.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="mt-6 space-y-3">
-                <button id="addToFavorites" class="w-full bg-white border border-primary text-primary font-medium py-2 rounded-button flex items-center justify-center">
-                  <i class="ri-heart-line mr-2"></i>
-                  Favorilere Ekle
-                </button>
-                <button class="w-full bg-primary text-white font-medium py-2 rounded-button flex items-center justify-center">
-                  <i class="ri-shopping-cart-line mr-2"></i>
-                  Satın Al
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Disease Gallery Section -->
-<div class="mt-4 mb-8">
-  <div class="flex justify-between items-center mb-4 pl-4">
-    <h2 class="text-lg font-semibold text-gray-800">Hastalık Görselleri</h2>
-    <span class="text-primary text-sm cursor-pointer">Tümünü Gör</span>
-  </div>
-  <div class="overflow-x-auto pb-2 -mx-4 px-4">
-    <div class="flex space-x-3 w-max">
-      <div class="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 w-56 flex-shrink-0">
-        <div class="h-40 overflow-hidden">
-          <img src="https://readdy.ai/api/search-image?query=close%20up%20detailed%20photograph%20of%20tomato%20plant%20with%20early%20blight%20disease%2C%20showing%20leaf%20symptoms%2C%20brown%20spots%20with%20concentric%20rings%2C%20clear%20disease%20progression%2C%20isolated%20on%20white%20background%2C%20high%20resolution%20plant%20pathology%20reference%20image&width=300&height=200&seq=10&orientation=landscape" alt="Erken Yanıklık Yaprak" class="w-full h-full object-cover">
-        </div>
-        <div class="p-3">
-          <p class="text-xs text-gray-600">Erken yanıklık hastalığının yapraklardaki tipik belirtileri</p>
-        </div>
-      </div>
-      <div class="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 w-56 flex-shrink-0">
-        <div class="h-40 overflow-hidden">
-          <img src="https://readdy.ai/api/search-image?query=close%20up%20detailed%20photograph%20of%20tomato%20fruit%20with%20early%20blight%20disease%2C%20showing%20fruit%20symptoms%2C%20dark%20sunken%20spots%2C%20clear%20disease%20progression%2C%20isolated%20on%20white%20background%2C%20high%20resolution%20plant%20pathology%20reference%20image&width=300&height=200&seq=11&orientation=landscape" alt="Erken Yanıklık Meyve" class="w-full h-full object-cover">
-        </div>
-        <div class="p-3">
-          <p class="text-xs text-gray-600">Erken yanıklık hastalığının meyvedeki belirtileri</p>
-        </div>
-      </div>
-      <div class="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border border-gray-100 w-56 flex-shrink-0">
-        <div class="h-40 overflow-hidden">
-          <img src="https://readdy.ai/api/search-image?query=close%20up%20detailed%20photograph%20of%20tomato%20plant%20with%20late%20blight%20disease%2C%20showing%20stem%20symptoms%2C%20dark%20brown%20lesions%2C%20clear%20disease%20progression%2C%20isolated%20on%20white%20background%2C%20high%20resolution%20plant%20pathology%20reference%20image&width=300&height=200&seq=12&orientation=landscape" alt="Geç Yanıklık Gövde" class="w-full h-full object-cover">
-        </div>
-        <div class="p-3">
-          <p class="text-xs text-gray-600">Geç yanıklık hastalığının gövdedeki belirtileri</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 </div>
 <!-- Tab Bar -->
 <div class="fixed bottom-0 w-full bg-white border-t border-gray-200 z-50">
@@ -446,6 +350,9 @@ transform: scale(0.98);
 </div>
 </div>
 </div>
+</div>
+</div>
+</div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 const plantCards = document.querySelectorAll('.plant-card');
@@ -463,35 +370,68 @@ card.addEventListener('click', function() {
 this.classList.toggle('border-primary');
 });
 });
-const biofungusCard = document.getElementById('biofungusCard');
-const biofungusDialog = document.getElementById('biofungusDialog');
-const closeBiofungusDialog = document.getElementById('closeBiofungusDialog');
-const addToFavorites = document.getElementById('addToFavorites');
-biofungusCard.addEventListener('click', function() {
-biofungusDialog.classList.remove('hidden');
-document.body.style.overflow = 'hidden';
+
+// Bunları Biliyor Musunuz Slider'ı için
+const sliderContainer = document.querySelector('.overflow-x-auto');
+const slider = sliderContainer.querySelector('.flex');
+let isDown = false;
+let startX;
+let scrollLeft;
+
+sliderContainer.addEventListener('mousedown', (e) => {
+  isDown = true;
+  sliderContainer.style.cursor = 'grabbing';
+  startX = e.pageX - sliderContainer.offsetLeft;
+  scrollLeft = sliderContainer.scrollLeft;
 });
-closeBiofungusDialog.addEventListener('click', function() {
-biofungusDialog.classList.add('hidden');
-document.body.style.overflow = '';
+
+sliderContainer.addEventListener('mouseleave', () => {
+  isDown = false;
+  sliderContainer.style.cursor = 'grab';
 });
-addToFavorites.addEventListener('click', function() {
-const icon = this.querySelector('i');
-if (icon.classList.contains('ri-heart-line')) {
-icon.classList.replace('ri-heart-line', 'ri-heart-fill');
-this.classList.add('bg-primary', 'text-white');
-this.classList.remove('bg-white', 'text-primary');
-} else {
-icon.classList.replace('ri-heart-fill', 'ri-heart-line');
-this.classList.remove('bg-primary', 'text-white');
-this.classList.add('bg-white', 'text-primary');
-}
+
+sliderContainer.addEventListener('mouseup', () => {
+  isDown = false;
+  sliderContainer.style.cursor = 'grab';
 });
-biofungusDialog.addEventListener('click', function(e) {
-if (e.target === this) {
-this.classList.add('hidden');
-document.body.style.overflow = '';
-}
+
+sliderContainer.addEventListener('mousemove', (e) => {
+  if (!isDown) return;
+  e.preventDefault();
+  const x = e.pageX - sliderContainer.offsetLeft;
+  const walk = (x - startX) * 2; // Kaydırma hızı
+  sliderContainer.scrollLeft = scrollLeft - walk;
+});
+
+// Dokunmatik cihazlar için
+let touchStartX;
+let touchScrollLeft;
+
+sliderContainer.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].pageX - sliderContainer.offsetLeft;
+  touchScrollLeft = sliderContainer.scrollLeft;
+});
+
+sliderContainer.addEventListener('touchmove', (e) => {
+  if (!touchStartX) return;
+  const x = e.touches[0].pageX - sliderContainer.offsetLeft;
+  const walk = (x - touchStartX) * 2;
+  sliderContainer.scrollLeft = touchScrollLeft - walk;
+});
+
+sliderContainer.addEventListener('touchend', () => {
+  touchStartX = null;
+});
+
+// Tümünü Gör butonu için
+const tumunuGorLink = document.querySelector('a[href="#"][class*="text-primary"]');
+tumunuGorLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  // Tüm kartları göster
+  sliderContainer.scrollTo({
+    left: 0,
+    behavior: 'smooth'
+  });
 });
 });
 </script>
@@ -587,6 +527,298 @@ if (navigator.geolocation) {
       .then(() => console.log("Service Worker kayıt edildi"))
       .catch((error) => console.log("Service Worker hatası:", error));
   }
+</script>
+
+<!-- Arama Sonuçları için JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const searchFilters = document.getElementById('searchFilters');
+    const searchFilterBtn = document.getElementById('searchFilterBtn');
+    const searchResultsList = document.getElementById('searchResultsList');
+    let searchTimeout;
+
+    // Popüler aramalar için tıklama olayı
+    document.querySelectorAll('#searchResults .flex-wrap button').forEach(button => {
+        button.addEventListener('click', () => {
+            searchInput.value = button.textContent.trim();
+            performSearch(button.textContent.trim());
+        });
+    });
+
+    // Arama filtresi toggle
+    searchFilterBtn.addEventListener('click', () => {
+        searchFilters.classList.toggle('hidden');
+    });
+
+    // Arama input değişikliği
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        const query = e.target.value.trim();
+
+        if (query.length < 2) {
+            searchResults.classList.add('hidden');
+            return;
+        }
+
+        // Debounce için timeout
+        searchTimeout = setTimeout(() => {
+            performSearch(query);
+        }, 300);
+    });
+
+    // Arama fonksiyonu
+    function performSearch(query) {
+        // Seçili kategorileri al
+        const selectedCategories = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+            .map(checkbox => checkbox.value);
+
+        // API'ye istek at
+        fetch(`/api/search?q=${encodeURIComponent(query)}&${selectedCategories.map(cat => `categories=${cat}`).join('&')}`)
+            .then(response => response.json())
+            .then(results => {
+                displayResults(results);
+            })
+            .catch(error => {
+                console.error('Arama hatası:', error);
+                searchResultsList.innerHTML = `
+                    <div class="p-4 text-center text-gray-500">
+                        Arama sırasında bir hata oluştu
+                    </div>
+                `;
+            });
+    }
+
+    // Sonuçları görüntüleme
+    function displayResults(results) {
+        searchResultsList.innerHTML = '';
+
+        if (results.length === 0) {
+            searchResultsList.innerHTML = `
+                <div class="p-4 text-center text-gray-500">
+                    Sonuç bulunamadı
+                </div>
+            `;
+        } else {
+            // Sonuçları doğrudan listele
+            results.forEach(result => {
+                const resultElement = document.createElement('a');
+                resultElement.href = result.link;
+                resultElement.className = 'block p-4 hover:bg-gray-50 transition-colors';
+
+                // Eşleşme türüne göre vurgulama
+                let highlightClass = '';
+                switch(result.match_type) {
+                    case 'title':
+                        highlightClass = 'text-primary font-semibold';
+                        break;
+                    case 'keyword':
+                        highlightClass = 'text-primary';
+                        break;
+                    case 'hastalik':
+                        highlightClass = 'text-orange-600';
+                        break;
+                    case 'alt_kategori':
+                        highlightClass = 'text-blue-600';
+                        break;
+                    default:
+                        highlightClass = 'text-gray-800';
+                        break;
+                }
+
+                // Detay bilgilerini hazırla
+                let detayHTML = '';
+                if (result.detay) {
+                    if (result.type === 'bitki') {
+                        // Bitki detayları
+                        const hastaliklar = result.detay.hastaliklar || [];
+                        if (hastaliklar.length > 0) {
+                            detayHTML += `
+                                <div class="mt-2">
+                                    <span class="text-xs text-gray-500">İlgili Hastalıklar:</span>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        ${hastaliklar.map(h => `
+                                            <span class="px-2 py-0.5 text-xs bg-orange-100 text-orange-800 rounded-full">
+                                                ${h.isim}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        if (result.detay.cesitler && result.detay.cesitler.length > 0) {
+                            detayHTML += `
+                                <div class="mt-2">
+                                    <span class="text-xs text-gray-500">Çeşitler:</span>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        ${result.detay.cesitler.map(c => `
+                                            <span class="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
+                                                ${c}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                         if (result.detay.bolgeler && result.detay.bolgeler.length > 0) {
+                            detayHTML += `
+                                <div class="mt-2">
+                                    <span class="text-xs text-gray-500">Yetiştiği Bölgeler:</span>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        ${result.detay.bolgeler.map(b => `
+                                            <span class="px-2 py-0.5 text-xs bg-gray-200 text-gray-700 rounded-full">
+                                                ${b}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                    } else if (result.type === 'hastalik') {
+                        // Hastalık detayları
+                        if (result.detay.belirtiler && result.detay.belirtiler.length > 0) {
+                            detayHTML += `
+                                <div class="mt-2">
+                                    <span class="text-xs text-gray-500">Belirtiler:</span>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        ${result.detay.belirtiler.map(b => `
+                                            <span class="px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded-full">
+                                                ${b}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        if (result.detay.mudahale && result.detay.mudahale.length > 0) {
+                            detayHTML += `
+                                <div class="mt-2">
+                                    <span class="text-xs text-gray-500">Müdahale:</span>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        ${result.detay.mudahale.map(m => `
+                                            <span class="px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded-full">
+                                                ${m}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                         if (result.detay.donem && result.detay.donem.length > 0) {
+                            detayHTML += `
+                                <div class="mt-2">
+                                    <span class="text-xs text-gray-500">Görüldüğü Dönem:</span>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        ${result.detay.donem.map(d => `
+                                            <span class="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">
+                                                ${d}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                    } else if (result.type === 'ilac') {
+                        // İlaç detayları
+                        if (result.detay.kullanim_alanlari && result.detay.kullanim_alanlari.length > 0) {
+                            detayHTML += `
+                                <div class="mt-2">
+                                    <span class="text-xs text-gray-500">Kullanım Alanları:</span>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        ${result.detay.kullanim_alanlari.map(k => `
+                                            <span class="px-2 py-0.5 text-xs bg-gray-100 text-gray-800 rounded-full">
+                                                ${k}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        if (result.detay.hedef_hastaliklar && result.detay.hedef_hastaliklar.length > 0) {
+                             detayHTML += `
+                                <div class="mt-2">
+                                    <span class="text-xs text-gray-500">Hedef Hastalıklar:</span>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        ${result.detay.hedef_hastaliklar.map(h => `
+                                            <span class="px-2 py-0.5 text-xs bg-orange-100 text-orange-800 rounded-full">
+                                                ${h}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        if (result.detay.hedef_zararlilar && result.detay.hedef_zararlilar.length > 0) {
+                             detayHTML += `
+                                <div class="mt-2">
+                                    <span class="text-xs text-gray-500">Hedef Zararlılar:</span>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        ${result.detay.hedef_zararlilar.map(z => `
+                                            <span class="px-2 py-0.5 text-xs bg-orange-100 text-orange-800 rounded-full">
+                                                ${z}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                         if (result.detay.uygulama_zamani && result.detay.uygulama_zamani.length > 0) {
+                            detayHTML += `
+                                <div class="mt-2">
+                                    <span class="text-xs text-gray-500">Uygulama Zamanı:</span>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        ${result.detay.uygulama_zamani.map(u => `
+                                            <span class="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">
+                                                ${u}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+
+                resultElement.innerHTML = `
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 flex items-center justify-center text-primary flex-shrink-0">
+                            <i class="${result.icon} text-xl"></i>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h4 class="text-sm ${highlightClass}">${result.title}</h4>
+                            <p class="text-xs text-gray-600 mt-1">${result.description}</p>
+                            ${result.match_type === 'hastalik' ? 
+                                `<span class="inline-block mt-1 px-2 py-0.5 text-xs bg-orange-100 text-orange-800 rounded-full">
+                                    Hastalık eşleşmesi
+                                </span>` : ''}
+                            ${result.match_type === 'alt_kategori' ? 
+                                `<span class="inline-block mt-1 px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
+                                    Alt kategori eşleşmesi
+                                </span>` : ''}
+                            ${detayHTML}
+                        </div>
+                    </div>
+                `;
+                searchResultsList.appendChild(resultElement);
+            });
+        }
+
+        searchResults.classList.remove('hidden');
+    }
+
+    // Dışarı tıklandığında sonuçları gizle
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.add('hidden');
+            searchFilters.classList.add('hidden');
+        }
+    });
+});
 </script>
 
 </body>

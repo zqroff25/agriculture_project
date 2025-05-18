@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ hastalik.isim }} - {{ bitki.isim }} Hastalığı</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#16a34a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; }
+        
+        /* Slider için stil */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        
+        .slider-item {
+            min-width: 100%;
+            padding: 0 10px;
+        }
+        
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .slider-nav:hover {
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        
+        .slider-prev {
+            left: 10px;
+        }
+        
+        .slider-next {
+            right: 10px;
+        }
+        
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .slider-dot.active {
+            background: #16a34a;
+            transform: scale(1.2);
+        }
+        
+        /* Modal için stil */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .modal-image {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            transition: transform 0.2s;
+        }
+        
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .modal-nav:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .modal-prev {
+            left: -70px;
+        }
+        
+        .modal-next {
+            right: -70px;
+        }
+        
+        .modal-close:hover {
+            transform: scale(1.1);
+        }
+    </style>
+    <script>
+        // Global değişkenleri tanımla
+        window.diseaseImages = [
+            {% for gorsel in hastalik.gorseller %}
+            "{{ gorsel }}"{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
+        window.totalSlides = {{ hastalik.gorseller|length }};
+    </script>
+    <script src="{{ url_for('static', filename='js/hastalik_detay.js') }}"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Geri Dön Butonu -->
+    <div class="p-4">
+        <a href="/bitki/{{ bitki.isim }}" class="inline-flex items-center text-primary font-medium">
+            <i class="ri-arrow-left-line mr-2"></i> {{ bitki.isim }} Sayfasına Dön
+        </a>
+    </div>
+
+    <!-- Bitki ve Hastalık Başlığı -->
+    <div class="flex flex-col items-center mt-2 mb-6">
+        <img src="{{ bitki.gorsel }}" alt="{{ bitki.isim }}" class="w-32 h-32 object-cover rounded-lg shadow-md mb-2">
+        <h1 class="text-2xl font-bold text-gray-800">{{ hastalik.isim }}</h1>
+        <p class="text-sm text-gray-600 mt-1">{{ bitki.isim }} Hastalığı</p>
+    </div>
+
+    <!-- Hastalık Detayları -->
+    <div class="max-w-4xl mx-auto px-6">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <!-- Hastalık Görseli Slider -->
+            <div class="slider-container mb-6" 
+                 data-total-slides="{{ hastalik.gorseller|length }}"
+                 data-images='{{ hastalik.gorseller|tojson|safe }}'>
+                <div class="slider" id="diseaseSlider">
+                    {% for gorsel in hastalik.gorseller %}
+                    <div class="slider-item">
+                        <img src="{{ gorsel }}" alt="{{ hastalik.isim }}" 
+                             class="w-full h-64 object-cover rounded-lg shadow-md cursor-pointer hover:opacity-90 transition-opacity"
+                             data-index="{{ loop.index0 }}">
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="slider-nav slider-prev">
+                    <i class="ri-arrow-left-s-line"></i>
+                </div>
+                <div class="slider-nav slider-next">
+                    <i class="ri-arrow-right-s-line"></i>
+                </div>
+                <div class="slider-dots" id="sliderDots">
+                    {% for gorsel in hastalik.gorseller %}
+                    <div class="slider-dot {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}"></div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Hastalık Açıklaması -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-3">Hastalık Hakkında</h2>
+                <p class="text-gray-600 leading-relaxed">{{ hastalik.aciklama }}</p>
+            </div>
+
+            <!-- İlaç Bilgileri -->
+            <div class="space-y-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Tedavi Bilgileri</h2>
+                {% for ilac in hastalik.ilaclar %}
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-primary mb-2">Etken Madde</h3>
+                            <p class="text-gray-700">{{ ilac.etken_madde }}</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-primary mb-2">Uygulama Zamanı</h3>
+                            <p class="text-gray-700">{{ ilac.uygulama_zamani }}</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <h3 class="text-lg font-semibold text-primary mb-2">Öneriler</h3>
+                            <p class="text-gray-700">{{ ilac.oneri }}</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <h3 class="text-lg font-semibold text-primary mb-2">Önemli Not</h3>
+                            <p class="text-gray-700">{{ ilac.not }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-close">
+                <i class="ri-close-line"></i>
+            </div>
+            <div class="modal-nav modal-prev">
+                <i class="ri-arrow-left-s-line"></i>
+            </div>
+            <img id="modalImage" class="modal-image" src="" alt="Büyük görsel">
+            <div class="modal-nav modal-next">
+                <i class="ri-arrow-right-s-line"></i>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
