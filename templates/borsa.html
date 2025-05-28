@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borsa Verileri</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#16a34a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; }
+    </style>
+</head>
+<body class="bg-gray-50 pb-16">
+    <!-- Geri Dön Butonu -->
+    <div class="p-4">
+        <a href="/" class="inline-flex items-center text-primary font-medium"><i class="ri-arrow-left-line mr-2"></i> Ana Sayfa</a>
+    </div>
+
+    <!-- Başlık -->
+    <div class="flex flex-col items-center mt-2 mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Tarım Borsası Verileri</h1>
+    </div>
+
+    <!-- Borsa Verileri Alanı (Örnek Veriler) -->
+    <div class="max-w-4xl mx-auto px-6">
+        <!-- Para Birimleri Bölümü -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Para Birimleri</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Dolar -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <i class="ri-dollar-circle-line text-2xl text-green-600 mr-2"></i>
+                            <span class="font-medium text-gray-700">USD/TRY</span>
+                        </div>
+                        <span class="text-sm text-gray-500">Dolar</span>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <span class="text-2xl font-bold text-gray-900" id="usd-price">--</span>
+                        <span class="text-sm text-green-600" id="usd-change">--</span>
+                    </div>
+                </div>
+                <!-- Euro -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <i class="ri-euro-circle-line text-2xl text-blue-600 mr-2"></i>
+                            <span class="font-medium text-gray-700">EUR/TRY</span>
+                        </div>
+                        <span class="text-sm text-gray-500">Euro</span>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <span class="text-2xl font-bold text-gray-900" id="eur-price">--</span>
+                        <span class="text-sm text-green-600" id="eur-change">--</span>
+                    </div>
+                </div>
+                <!-- Altın -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <i class="ri-coins-line text-2xl text-yellow-600 mr-2"></i>
+                            <span class="font-medium text-gray-700">XAU/TRY</span>
+                        </div>
+                        <span class="text-sm text-gray-500">Altın</span>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <span class="text-2xl font-bold text-gray-900" id="gold-price">--</span>
+                        <span class="text-sm text-green-600" id="gold-change">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarım Borsası Verileri -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-800">Tarım Borsası</h2>
+                <span class="text-sm text-gray-500" id="commodity-date">--</span>
+            </div>
+            
+            <!-- Ürün Kartları -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="commodity-grid">
+                <!-- Buğday -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <i class="ri-wheat-line text-2xl text-yellow-600 mr-2"></i>
+                            <span class="font-medium text-gray-700">Buğday</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Ekmeklik</span>
+                            <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Makarnalık</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Ekmeklik</span>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-gray-900" id="bugday-ekmeklik-price">--</span>
+                                <span class="text-sm text-gray-500 ml-1">TL/Ton</span>
+                                <div class="text-sm" id="bugday-ekmeklik-change">--</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Makarnalık</span>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-gray-900" id="bugday-makarnalik-price">--</span>
+                                <span class="text-sm text-gray-500 ml-1">TL/Ton</span>
+                                <div class="text-sm" id="bugday-makarnalik-change">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arpa -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <i class="ri-wheat-line text-2xl text-green-600 mr-2"></i>
+                            <span class="font-medium text-gray-700">Arpa</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Yemlik</span>
+                            <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Maltlık</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Yemlik</span>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-gray-900" id="arpa-yemlik-price">--</span>
+                                <span class="text-sm text-gray-500 ml-1">TL/Ton</span>
+                                <div class="text-sm" id="arpa-yemlik-change">--</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Maltlık</span>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-gray-900" id="arpa-maltlik-price">--</span>
+                                <span class="text-sm text-gray-500 ml-1">TL/Ton</span>
+                                <div class="text-sm" id="arpa-maltlik-change">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mısır -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <i class="ri-plant-line text-2xl text-yellow-500 mr-2"></i>
+                            <span class="font-medium text-gray-700">Mısır</span>
+                        </div>
+                        <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Yemlik</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Yemlik</span>
+                        <div class="text-right">
+                            <span class="text-lg font-bold text-gray-900" id="misir-yemlik-price">--</span>
+                            <span class="text-sm text-gray-500 ml-1">TL/Ton</span>
+                            <div class="text-sm" id="misir-yemlik-change">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pancar -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <i class="ri-plant-line text-2xl text-red-600 mr-2"></i>
+                            <span class="font-medium text-gray-700">Pancar</span>
+                        </div>
+                        <span class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full">Şeker</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Şeker</span>
+                        <div class="text-right">
+                            <span class="text-lg font-bold text-gray-900" id="pancar-seker-price">--</span>
+                            <span class="text-sm text-gray-500 ml-1">TL/Ton</span>
+                            <div class="text-sm" id="pancar-seker-change">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ayçiçeği -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <i class="ri-sun-flower-line text-2xl text-yellow-500 mr-2"></i>
+                            <span class="font-medium text-gray-700">Ayçiçeği</span>
+                        </div>
+                        <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Yağlık</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Yağlık</span>
+                        <div class="text-right">
+                            <span class="text-lg font-bold text-gray-900" id="aycicegi-yaglik-price">--</span>
+                            <span class="text-sm text-gray-500 ml-1">TL/Ton</span>
+                            <div class="text-sm" id="aycicegi-yaglik-change">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nohut -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <i class="ri-plant-line text-2xl text-orange-600 mr-2"></i>
+                            <span class="font-medium text-gray-700">Nohut</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <span class="text-xs px-2 py-1 bg-orange-100 text-orange-800 rounded-full">Kırmızı</span>
+                            <span class="text-xs px-2 py-1 bg-orange-100 text-orange-800 rounded-full">Sarı</span>
+                            <span class="text-xs px-2 py-1 bg-orange-100 text-orange-800 rounded-full">Beyaz</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Kırmızı</span>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-gray-900" id="nohut-kirmizi-price">--</span>
+                                <span class="text-sm text-gray-500 ml-1">TL/Ton</span>
+                                <div class="text-sm" id="nohut-kirmizi-change">--</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Sarı</span>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-gray-900" id="nohut-sari-price">--</span>
+                                <span class="text-sm text-gray-500 ml-1">TL/Ton</span>
+                                <div class="text-sm" id="nohut-sari-change">--</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Beyaz</span>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-gray-900" id="nohut-beyaz-price">--</span>
+                                <span class="text-sm text-gray-500 ml-1">TL/Ton</span>
+                                <div class="text-sm" id="nohut-beyaz-change">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grafik veya Ek Bilgiler Alanı -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+             <h2 class="text-xl font-semibold text-gray-800 mb-4">Piyasa Eğilimleri</h2>
+             <p class="text-gray-600">Türkiye tarım borsasındaki güncel fiyatlar ve eğilimler hakkında bilgiler.</p>
+             <!-- Grafik veya diğer görselleştirmeler buraya eklenebilir -->
+        </div>
+    </div>
+
+    <!-- Alttaki navigasyon barı (anaSayfa.html'den dahil edilecek veya buraya kopyalanacak) -->
+    
+    <!-- Sayfa sonuna JavaScript ekleyelim -->
+    <script>
+    // Para birimleri verilerini çekmek için fonksiyon
+    async function getCurrencyRates() {
+        try {
+            const response = await fetch('/api/currency-rates');
+            const data = await response.json();
+            
+            // Dolar
+            document.getElementById('usd-price').textContent = data.usd.price.toLocaleString('tr-TR', {minimumFractionDigits: 2});
+            document.getElementById('usd-change').textContent = `${data.usd.change > 0 ? '+' : ''}${data.usd.change}%`;
+            document.getElementById('usd-change').className = `text-sm ${data.usd.change >= 0 ? 'text-green-600' : 'text-red-600'}`;
+            
+            // Euro
+            document.getElementById('eur-price').textContent = data.eur.price.toLocaleString('tr-TR', {minimumFractionDigits: 2});
+            document.getElementById('eur-change').textContent = `${data.eur.change > 0 ? '+' : ''}${data.eur.change}%`;
+            document.getElementById('eur-change').className = `text-sm ${data.eur.change >= 0 ? 'text-green-600' : 'text-red-600'}`;
+            
+            // Altın
+            document.getElementById('gold-price').textContent = data.gold.price.toLocaleString('tr-TR', {minimumFractionDigits: 2});
+            document.getElementById('gold-change').textContent = `${data.gold.change > 0 ? '+' : ''}${data.gold.change}%`;
+            document.getElementById('gold-change').className = `text-sm ${data.gold.change >= 0 ? 'text-green-600' : 'text-red-600'}`;
+        } catch (error) {
+            console.error('Para birimi verileri alınamadı:', error);
+        }
+    }
+
+    // Tarım borsası verilerini çekmek için fonksiyon
+    async function getCommodityPrices() {
+        try {
+            const response = await fetch('/api/commodity-prices');
+            const data = await response.json();
+            
+            // Tarih bilgisini güncelle
+            const firstDate = Object.values(data)[0]?.ekmeklik?.date || 
+                             Object.values(data)[0]?.yemlik?.date || 
+                             new Date().toLocaleDateString('tr-TR');
+            document.getElementById('commodity-date').textContent = `Son Güncelleme: ${firstDate}`;
+            
+            // Buğday
+            if (data.bugday) {
+                if (data.bugday.ekmeklik) {
+                    updatePrice('bugday-ekmeklik', data.bugday.ekmeklik);
+                }
+                if (data.bugday.makarnalik) {
+                    updatePrice('bugday-makarnalik', data.bugday.makarnalik);
+                }
+            }
+            
+            // Arpa
+            if (data.arpa) {
+                if (data.arpa.yemlik) {
+                    updatePrice('arpa-yemlik', data.arpa.yemlik);
+                }
+                if (data.arpa.maltlik) {
+                    updatePrice('arpa-maltlik', data.arpa.maltlik);
+                }
+            }
+            
+            // Mısır
+            if (data.misir?.yemlik) {
+                updatePrice('misir-yemlik', data.misir.yemlik);
+            }
+            
+            // Pancar
+            if (data.pancar?.seker) {
+                updatePrice('pancar-seker', data.pancar.seker);
+            }
+            
+            // Ayçiçeği
+            if (data.aycicegi?.yaglik) {
+                updatePrice('aycicegi-yaglik', data.aycicegi.yaglik);
+            }
+            
+            // Nohut
+            if (data.nohut) {
+                if (data.nohut.kirmizi) {
+                    updatePrice('nohut-kirmizi', data.nohut.kirmizi);
+                }
+                if (data.nohut.sari) {
+                    updatePrice('nohut-sari', data.nohut.sari);
+                }
+                if (data.nohut.beyaz) {
+                    updatePrice('nohut-beyaz', data.nohut.beyaz);
+                }
+            }
+            
+        } catch (error) {
+            console.error('Tarım borsası verileri alınamadı:', error);
+        }
+    }
+
+    // Fiyat güncelleme yardımcı fonksiyonu
+    function updatePrice(elementPrefix, data) {
+        const priceElement = document.getElementById(`${elementPrefix}-price`);
+        const changeElement = document.getElementById(`${elementPrefix}-change`);
+        
+        if (priceElement && data.price) {
+            priceElement.textContent = data.price.toLocaleString('tr-TR');
+        }
+        
+        if (changeElement && data.change !== undefined) {
+            const changeText = `${data.change > 0 ? '+' : ''}${data.change}%`;
+            changeElement.textContent = changeText;
+            changeElement.className = `text-sm ${data.change >= 0 ? 'text-green-600' : 'text-red-600'}`;
+        }
+    }
+
+    // Sayfa yüklendiğinde ve her 5 dakikada bir verileri güncelle
+    document.addEventListener('DOMContentLoaded', () => {
+        getCurrencyRates();
+        getCommodityPrices();
+        setInterval(getCurrencyRates, 300000); // 5 dakika
+        setInterval(getCommodityPrices, 300000); // 5 dakika
+    });
+    </script>
+</body>
+</html> 

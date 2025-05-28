@@ -57,6 +57,13 @@ transform: scale(0.98);
 .medicine-card:active {
 transform: scale(0.98);
 }
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
 </style>
 </head>
 <body class="bg-gray-50">
@@ -342,17 +349,30 @@ transform: scale(0.98);
 </div>
 <span class="text-xs text-gray-500 mt-1">Takvim</span>
 </div>
-<div class="flex flex-col items-center justify-center cursor-pointer">
+<a href="/borsa" class="flex flex-col items-center justify-center">
 <div class="w-6 h-6 flex items-center justify-center">
-<i class="ri-user-line ri-lg text-gray-500"></i>
+<i class="ri-line-chart-line ri-lg text-gray-500"></i>
 </div>
-<span class="text-xs text-gray-500 mt-1">Profil</span>
-</div>
-</div>
-</div>
+<span class="text-xs text-gray-500 mt-1">Borsa</span>
+</a>
 </div>
 </div>
 </div>
+</div>
+</div>
+
+<!-- Tarım Haberleri Bölümü -->
+<section class="pt-4 pb-20 bg-gray-100">
+    <div class="max-w-6xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Tarım Haberleri</h2>
+        <div class="overflow-x-auto hide-scrollbar px-4 -mx-4">
+            <div class="flex space-x-6" id="news-container">
+                <!-- Haber öğeleri buraya yüklenecek -->
+            </div>
+        </div>
+    </div>
+</section>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 const plantCards = document.querySelectorAll('.plant-card');
@@ -818,6 +838,56 @@ document.addEventListener('DOMContentLoaded', function() {
             searchFilters.classList.add('hidden');
         }
     });
+});
+</script>
+
+<script>
+// Hava durumu bilgisini yükle
+async function loadWeather() {
+    // ... existing code ...
+}
+
+// Bilgi kartlarını yükle
+async function loadInfoCards() {
+    // ... existing code ...
+}
+
+// Haberleri yükle
+async function loadNews() {
+    try {
+        const response = await fetch('/api/news');
+        const news = await response.json();
+        const newsContainer = document.getElementById('news-container');
+        newsContainer.innerHTML = ''; // Mevcut placeholder'ları temizle
+
+        if (news.length === 0) {
+            newsContainer.innerHTML = '<p class="text-gray-600 text-center w-full">Güncel haber bulunamadı.</p>';
+            return;
+        }
+
+        news.forEach(item => {
+            // Haber kartını tıklanabilir yapmak için <a> etiketi ile sarıyoruz
+            const newsItem = `
+                <a href="${item.link}" class="flex-none w-64 bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 block hover:shadow-lg transition-shadow duration-200">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800">${item.title}</h3>
+                    </div>
+                </a>
+            `;
+            newsContainer.innerHTML += newsItem;
+        });
+
+    } catch (error) {
+        console.error('Haberler yüklenirken bir hata oluştu:', error);
+        document.getElementById('news-container').innerHTML = '<p class="text-red-600 text-center w-full">Haberler yüklenemedi.</p>';
+    }
+}
+
+// Sayfa yüklendiğinde hava durumu, bilgi kartları ve haberleri yükle
+document.addEventListener('DOMContentLoaded', () => {
+    loadWeather();
+    loadInfoCards();
+    loadNews(); // Haberleri yükle
 });
 </script>
 

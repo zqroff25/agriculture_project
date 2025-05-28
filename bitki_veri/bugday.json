@@ -5,141 +5,344 @@
     {
       "isim": "Sarı Pas (Fungusit)",
       "aciklama": "Yapraklarda sarı, dar ve uzun çizgiler şeklinde püstüller. Fotosentezi azaltarak verim kaybına neden olur.",
+      "belirtiler": [
+        "Yapraklarda sarı, dar ve uzun çizgiler",
+        "Püstüllerin yaprak yüzeyinde düzenli dağılımı",
+        "Yaprakların erken kuruması",
+        "Verim kaybı"
+      ],
+      "mudahale_zamani": "Kardeşlenme başlangıcından sapa kalkma dönemine kadar",
+      "onlemler": [
+        "Dayanıklı çeşit kullanımı",
+        "Erken ekim",
+        "Aşırı azotlu gübre kullanımından kaçınma",
+        "Tarla sınırlarındaki yabani buğdaygillerin temizlenmesi"
+      ],
       "gorseller": [
-        "/static/sariPas.png",
-        "/static/sariPas.png",
-        "/static/sariPas.png"
+        "/static/hastaliklar/sari_pas_1.jpg",
+        "/static/hastaliklar/sari_pas_2.jpg",
+        "/static/hastaliklar/sari_pas_3.jpg"
       ],
       "ilaclar": [
         {
-          "etken_madde": "Prothioconazole",
-          "uygulama_zamani": "Kardeşlenme öncesi dönem",
-          "oneri": "Yaprak üzerinde sarı pas belirtisi görülmeden önce koruyucu olarak kullanılmalıdır.",
-          "not": "Zirai bayiden bu etken maddeyi içeren onaylı bir ürün hakkında bilgi alınız."
+          "isim": "Tilt 250 EC",
+          "etken_madde": "Propikonazol",
+          "uygulama_zamani": "İlk belirtiler görüldüğünde",
+          "doz": "200 ml/da",
+          "bekleme_suresi": "28 gün",
+          "oneri": "Yaprak üzerinde sarı pas belirtisi görüldüğünde uygulanmalıdır."
+        },
+        {
+          "isim": "Folicur 250 EW",
+          "etken_madde": "Tebuconazole",
+          "uygulama_zamani": "İlk belirtiler görüldüğünde",
+          "doz": "150 ml/da",
+          "bekleme_suresi": "35 gün",
+          "oneri": "Hastalık belirtileri görüldüğünde koruyucu olarak kullanılmalıdır."
         }
       ]
     },
     {
       "isim": "Kahverengi Pas (Fungusit)",
       "aciklama": "Yapraklarda düzensiz dağılmış kahverengi püstüller. Yaprak yüzeyinde yaygınlaşarak bitkinin zayıflamasına yol açar.",
-      "gorsel": "",
+      "belirtiler": [
+        "Yapraklarda düzensiz kahverengi püstüller",
+        "Püstüllerin yaprak yüzeyinde rastgele dağılımı",
+        "Yaprakların erken kuruması",
+        "Verim ve kalite kaybı"
+      ],
+      "mudahale_zamani": "Kardeşlenme döneminden sapa kalkma sonuna kadar",
+      "onlemler": [
+        "Dayanıklı çeşit kullanımı",
+        "Uygun ekim zamanı",
+        "Dengeli gübreleme",
+        "Tarla temizliği"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/kahverengi_pas_1.jpg",
+        "/static/hastaliklar/kahverengi_pas_2.jpg"
+      ],
       "ilaclar": [
         {
-          "etken_madde": "Prothioconazole",
-          "uygulama_zamani": "Kardeşlenme öncesi dönem",
-          "oneri": "Yaprak üzerinde sarı pas belirtisi görülmeden önce koruyucu olarak kullanılmalıdır.",
-          "not": "Zirai bayiden bu etken maddeyi içeren onaylı bir ürün hakkında bilgi alınız."
+          "isim": "Rex Duo",
+          "etken_madde": "Epoxiconazole + Fenpropimorph",
+          "uygulama_zamani": "İlk belirtiler görüldüğünde",
+          "doz": "150 ml/da",
+          "bekleme_suresi": "35 gün",
+          "oneri": "Hastalık belirtileri görüldüğünde koruyucu olarak kullanılmalıdır."
+        },
+        {
+          "isim": "Amistar Xtra",
+          "etken_madde": "Azoxystrobin + Cyproconazole",
+          "uygulama_zamani": "İlk belirtiler görüldüğünde",
+          "doz": "200 ml/da",
+          "bekleme_suresi": "30 gün",
+          "oneri": "Hastalık riski yüksek olan bölgelerde koruyucu olarak kullanılabilir."
         }
       ]
     },
     {
       "isim": "Kara Pas (Fungusit)",
       "aciklama": "Sap ve yapraklarda koyu renkli, uzun püstüller. Sapın zayıflamasına ve yatmaya neden olur.",
-      "gorsel": "",
+      "belirtiler": [
+        "Sap ve yapraklarda koyu renkli püstüller",
+        "Püstüllerin uzun ve belirgin olması",
+        "Sapın zayıflaması ve yatma",
+        "Ciddi verim kaybı"
+      ],
+      "mudahale_zamani": "Sapa kalkma döneminden başaklanma başlangıcına kadar",
+      "onlemler": [
+        "Dayanıklı çeşit kullanımı",
+        "Geç ekim",
+        "Tarla temizliği",
+        "Yabani buğdaygillerin kontrolü"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/kara_pas_1.jpg",
+        "/static/hastaliklar/kara_pas_2.jpg"
+      ],
       "ilaclar": [
         {
-          "etken_madde": "Prothioconazole",
-          "uygulama_zamani": "Kardeşlenme öncesi dönem",
-          "oneri": "Yaprak üzerinde sarı pas belirtisi görülmeden önce koruyucu olarak kullanılmalıdır.",
-          "not": "Zirai bayiden bu etken maddeyi içeren onaylı bir ürün hakkında bilgi alınız."
+          "isim": "Prosaro 250 EC",
+          "etken_madde": "Prothioconazole + Tebuconazole",
+          "uygulama_zamani": "İlk belirtiler görüldüğünde",
+          "doz": "200 ml/da",
+          "bekleme_suresi": "35 gün",
+          "oneri": "Hastalık belirtileri görüldüğünde koruyucu olarak kullanılmalıdır."
         }
       ]
     },
     {
       "isim": "Sürme (Fungusit)",
       "aciklama": "Başaklarda mavimsi-yeşil renk ve tanelerde balık kokusu. Tanelerin içi siyah sporlarla dolarak kaliteyi düşürür.",
-      "gorsel": "",
+      "belirtiler": [
+        "Başaklarda mavimsi-yeşil renk",
+        "Tanelerde balık kokusu",
+        "Tanelerin içinde siyah sporlar",
+        "Kalite kaybı"
+      ],
+      "mudahale_zamani": "Tohum ilaçlaması şeklinde ekim öncesi",
+      "onlemler": [
+        "Sertifikalı tohum kullanımı",
+        "Tohum ilaçlaması",
+        "Dayanıklı çeşit kullanımı",
+        "Temiz tohumluk kullanımı"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/surme_1.jpg",
+        "/static/hastaliklar/surme_2.jpg"
+      ],
       "ilaclar": [
         {
-          "etken_madde": "Prothioconazole",
-          "uygulama_zamani": "Kardeşlenme öncesi dönem",
-          "oneri": "Yaprak üzerinde sarı pas belirtisi görülmeden önce koruyucu olarak kullanılmalıdır.",
-          "not": "Zirai bayiden bu etken maddeyi içeren onaylı bir ürün hakkında bilgi alınız."
+          "isim": "Raxil 2 FS",
+          "etken_madde": "Tebuconazole",
+          "uygulama_zamani": "Ekim öncesi tohum ilaçlaması",
+          "doz": "150 ml/100 kg tohum",
+          "bekleme_suresi": "Yok",
+          "oneri": "Tohum ilaçlaması şeklinde uygulanmalıdır."
         }
       ]
     },
     {
       "isim": "Rastık (Fungusit)",
       "aciklama": "Başaklarda siyah toz yığını şeklinde sporlar. Tohumla bulaşarak yeni bitkileri enfekte eder.",
-      "gorsel": "",
+      "belirtiler": [
+        "Başaklarda siyah toz yığını",
+        "Sporların rüzgarla yayılması",
+        "Bitkilerin cüce kalması",
+        "Verim kaybı"
+      ],
+      "mudahale_zamani": "Tohum ilaçlaması şeklinde ekim öncesi",
+      "onlemler": [
+        "Sertifikalı tohum kullanımı",
+        "Tohum ilaçlaması",
+        "Temiz tohumluk kullanımı",
+        "Tarla temizliği"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/rastik_1.jpg",
+        "/static/hastaliklar/rastik_2.jpg"
+      ],
       "ilaclar": [
         {
-          "etken_madde": "Prothioconazole",
-          "uygulama_zamani": "Kardeşlenme öncesi dönem",
-          "oneri": "Yaprak üzerinde sarı pas belirtisi görülmeden önce koruyucu olarak kullanılmalıdır.",
-          "not": "Zirai bayiden bu etken maddeyi içeren onaylı bir ürün hakkında bilgi alınız."
+          "isim": "Raxil 2 FS",
+          "etken_madde": "Tebuconazole",
+          "uygulama_zamani": "Ekim öncesi tohum ilaçlaması",
+          "doz": "150 ml/100 kg tohum",
+          "bekleme_suresi": "Yok",
+          "oneri": "Tohum ilaçlaması şeklinde uygulanmalıdır."
         }
       ]
     },
     {
       "isim": "Külleme (Fungusit)",
       "aciklama": "Yaprakların üst yüzeyinde beyaz, tozlu mantar tabakası. Fotosentezi engelleyerek bitkinin gelişimini yavaşlatır.",
-      "gorsel": "",
+      "belirtiler": [
+        "Yapraklarda beyaz, tozlu tabaka",
+        "Yaprakların erken kuruması",
+        "Bitki gelişiminde yavaşlama",
+        "Verim kaybı"
+      ],
+      "mudahale_zamani": "Kardeşlenme döneminden sapa kalkma sonuna kadar",
+      "onlemler": [
+        "Dayanıklı çeşit kullanımı",
+        "Erken ekim",
+        "Dengeli gübreleme",
+        "Tarla temizliği"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/kuleme_1.jpg",
+        "/static/hastaliklar/kuleme_2.jpg"
+      ],
       "ilaclar": [
         {
-          "etken_madde": "Prothioconazole",
-          "uygulama_zamani": "Kardeşlenme öncesi dönem",
-          "oneri": "Yaprak üzerinde sarı pas belirtisi görülmeden önce koruyucu olarak kullanılmalıdır.",
-          "not": "Zirai bayiden bu etken maddeyi içeren onaylı bir ürün hakkında bilgi alınız."
+          "isim": "Tilt 250 EC",
+          "etken_madde": "Propikonazol",
+          "uygulama_zamani": "İlk belirtiler görüldüğünde",
+          "doz": "200 ml/da",
+          "bekleme_suresi": "28 gün",
+          "oneri": "Hastalık belirtileri görüldüğünde koruyucu olarak kullanılmalıdır."
+        },
+        {
+          "isim": "Amistar Xtra",
+          "etken_madde": "Azoxystrobin + Cyproconazole",
+          "uygulama_zamani": "İlk belirtiler görüldüğünde",
+          "doz": "200 ml/da",
+          "bekleme_suresi": "30 gün",
+          "oneri": "Hastalık riski yüksek olan bölgelerde koruyucu olarak kullanılabilir."
         }
       ]
     },
     {
       "isim": "Septoria Yaprak Lekesi (Fungusit)",
       "aciklama": "Yapraklarda sarı haleli kahverengi lekeler. Yaprakların erken kurumasına ve verim kaybına neden olur.",
-      "gorsel": "",
+      "belirtiler": [
+        "Yapraklarda sarı haleli kahverengi lekeler",
+        "Lekelerin yaprak yüzeyinde yayılması",
+        "Yaprakların erken kuruması",
+        "Verim kaybı"
+      ],
+      "mudahale_zamani": "Kardeşlenme döneminden sapa kalkma sonuna kadar",
+      "onlemler": [
+        "Dayanıklı çeşit kullanımı",
+        "Uygun ekim zamanı",
+        "Dengeli gübreleme",
+        "Tarla temizliği"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/septoria_1.jpg",
+        "/static/hastaliklar/septoria_2.jpg"
+      ],
       "ilaclar": [
         {
-          "etken_madde": "Prothioconazole",
-          "uygulama_zamani": "Kardeşlenme öncesi dönem",
-          "oneri": "Yaprak üzerinde sarı pas belirtisi görülmeden önce koruyucu olarak kullanılmalıdır.",
-          "not": "Zirai bayiden bu etken maddeyi içeren onaylı bir ürün hakkında bilgi alınız."
+          "isim": "Prosaro 250 EC",
+          "etken_madde": "Prothioconazole + Tebuconazole",
+          "uygulama_zamani": "İlk belirtiler görüldüğünde",
+          "doz": "200 ml/da",
+          "bekleme_suresi": "35 gün",
+          "oneri": "Hastalık belirtileri görüldüğünde koruyucu olarak kullanılmalıdır."
         }
       ]
     },
     {
       "isim": "Fusarium Başak Çürüklüğü (Fungusit)",
       "aciklama": "Başaklarda beyazlaşma ve tanelerde büzülme. Tanelerin kalitesini düşürür ve mikotoksin üretimiyle sağlık riskleri oluşturur.",
-      "gorsel": "",
+      "belirtiler": [
+        "Başaklarda beyazlaşma",
+        "Tanelerde büzülme",
+        "Pembe-turuncu spor kümeleri",
+        "Mikotoksin riski"
+      ],
+      "mudahale_zamani": "Başaklanma başlangıcından süt olum dönemine kadar",
+      "onlemler": [
+        "Dayanıklı çeşit kullanımı",
+        "Uygun ekim zamanı",
+        "Dengeli gübreleme",
+        "Tarla temizliği"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/fusarium_1.jpg",
+        "/static/hastaliklar/fusarium_2.jpg"
+      ],
       "ilaclar": [
         {
-          "etken_madde": "Prothioconazole",
-          "uygulama_zamani": "Kardeşlenme öncesi dönem",
-          "oneri": "Yaprak üzerinde sarı pas belirtisi görülmeden önce koruyucu olarak kullanılmalıdır.",
-          "not": "Zirai bayiden bu etken maddeyi içeren onaylı bir ürün hakkında bilgi alınız."
+          "isim": "Prosaro 250 EC",
+          "etken_madde": "Prothioconazole + Tebuconazole",
+          "uygulama_zamani": "Başaklanma başlangıcında",
+          "doz": "200 ml/da",
+          "bekleme_suresi": "35 gün",
+          "oneri": "Hastalık riski yüksek olan bölgelerde koruyucu olarak kullanılmalıdır."
         }
       ]
     },
     {
       "isim": "Kök ve Kökboğazı Çürüklüğü (Fungusit)",
       "aciklama": "Kök ve kök boğazında kahverengi çürüklükler. Bitkinin besin alımını engelleyerek gelişimini durdurur.",
-      "gorsel": "",
+      "belirtiler": [
+        "Kök ve kök boğazında kahverengi çürüklükler",
+        "Bitkilerin cüce kalması",
+        "Yaprakların sararması",
+        "Erken kuruma"
+      ],
+      "mudahale_zamani": "Ekim öncesi tohum ilaçlaması",
+      "onlemler": [
+        "Dayanıklı çeşit kullanımı",
+        "Tohum ilaçlaması",
+        "Uygun ekim zamanı",
+        "Tarla temizliği"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/kok_curuklugu_1.jpg",
+        "/static/hastaliklar/kok_curuklugu_2.jpg"
+      ],
       "ilaclar": [
         {
-          "etken_madde": "Prothioconazole",
-          "uygulama_zamani": "Kardeşlenme öncesi dönem",
-          "oneri": "Yaprak üzerinde sarı pas belirtisi görülmeden önce koruyucu olarak kullanılmalıdır.",
-          "not": "Zirai bayiden bu etken maddeyi içeren onaylı bir ürün hakkında bilgi alınız."
+          "isim": "Raxil 2 FS",
+          "etken_madde": "Tebuconazole",
+          "uygulama_zamani": "Ekim öncesi tohum ilaçlaması",
+          "doz": "150 ml/100 kg tohum",
+          "bekleme_suresi": "Yok",
+          "oneri": "Tohum ilaçlaması şeklinde uygulanmalıdır."
         }
       ]
     },
     {
       "isim": "Yabani Hardal (Herbisit)",
       "aciklama": "Buğdayla besin ve su rekabetine girerek verimi düşürür.",
-      "gorsel": "",
+      "belirtiler": [
+        "Tarlada sarı çiçekli bitkiler",
+        "Buğdayın gelişiminin yavaşlaması",
+        "Besin ve su rekabeti",
+        "Verim kaybı"
+      ],
+      "mudahale_zamani": "Kardeşlenme döneminde",
+      "onlemler": [
+        "Temiz tohumluk kullanımı",
+        "Tarla temizliği",
+        "Uygun ekim zamanı",
+        "Dengeli gübreleme"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/yabani_hardal_1.jpg",
+        "/static/hastaliklar/yabani_hardal_2.jpg"
+      ],
       "ilaclar": [
         {
-          "etken_madde": "Prothioconazole",
-          "uygulama_zamani": "Kardeşlenme öncesi dönem",
-          "oneri": "Yaprak üzerinde sarı pas belirtisi görülmeden önce koruyucu olarak kullanılmalıdır.",
-          "not": "Zirai bayiden bu etken maddeyi içeren onaylı bir ürün hakkında bilgi alınız."
+          "isim": "Puma Super",
+          "etken_madde": "Fenoksaprop-P-etil",
+          "uygulama_zamani": "Kardeşlenme döneminde",
+          "doz": "100 ml/da",
+          "bekleme_suresi": "60 gün",
+          "oneri": "Yabani otlar 2-4 yapraklı dönemde iken uygulanmalıdır."
         }
       ]
     },
     {
       "isim": "Yabani Yulaf (Herbisit)",
       "aciklama": "Hızlı gelişimiyle buğdayı gölgeler ve besin rekabetine girer.",
-      "gorsel": "",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",
@@ -152,7 +355,9 @@
     {
       "isim": "Tilki Kuyruğu (Herbisit)",
       "aciklama": "Yoğunluğu arttıkça buğday verimini ciddi oranda azaltır.",
-      "gorsel": "",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",
@@ -165,7 +370,9 @@
     {
       "isim": "Delice (Herbisit)",
       "aciklama": "Buğdayla benzer morfolojiye sahip olup, ayrımı ve mücadelesi zordur.",
-      "gorsel": "",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",
@@ -178,7 +385,9 @@
     {
       "isim": "Çobançantası (Herbisit)",
       "aciklama": "Hızlı çoğalır ve buğdayla rekabete girerek verimi düşürür.",
-      "gorsel": "",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",
@@ -191,7 +400,9 @@
     {
       "isim": "Gelincik (Herbisit)",
       "aciklama": "Tarlada yoğunlaştığında buğdayın gelişimini engeller.",
-      "gorsel": "",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",
@@ -204,7 +415,9 @@
     {
       "isim": "Yabani Turp (Herbisit)",
       "aciklama": "Buğdayla besin ve su rekabetine girerek verimi azaltır.",
-      "gorsel": "",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",
@@ -217,7 +430,9 @@
     {
       "isim": "Köygöçüren (Herbisit)",
       "aciklama": "Derin kök sistemiyle buğdayın su ve besin alımını engeller.",
-      "gorsel": "",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",
@@ -230,7 +445,9 @@
     {
       "isim": "Tarla Sarmaşığı (Herbisit)",
       "aciklama": "Sarmaşık yapısıyla buğdayı sarar ve gelişimini engeller.",
-      "gorsel": "",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",
@@ -243,7 +460,9 @@
     {
       "isim": "Ballıbaba (Herbisit)",
       "aciklama": "Hızlı yayılımıyla buğdayın gelişimini olumsuz etkiler.",
-      "gorsel": "",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",
@@ -256,20 +475,40 @@
     {
       "isim": "Süne (İnsektisit)",
       "aciklama": "Buğdayın en önemli zararlılarından biridir. Kardeşlenme döneminde sapları emerek 'kurtboğazı', başak döneminde ise taneleri emerek 'akbaşak' zararı oluşturur.",
-      "gorsel": "",
+      "belirtiler": [
+        "Kardeşlenme döneminde 'kurtboğazı' zararı",
+        "Başak döneminde 'akbaşak' zararı",
+        "Bitkilerin kuruması",
+        "Verim ve kalite kaybı"
+      ],
+      "mudahale_zamani": "Kardeşlenme ve başaklanma dönemlerinde",
+      "onlemler": [
+        "Erken ekim",
+        "Tarla temizliği",
+        "Biyolojik mücadele",
+        "Kimyasal mücadele"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/sune_1.jpg",
+        "/static/hastaliklar/sune_2.jpg"
+      ],
       "ilaclar": [
         {
-          "etken_madde": "Prothioconazole",
-          "uygulama_zamani": "Kardeşlenme öncesi dönem",
-          "oneri": "Yaprak üzerinde sarı pas belirtisi görülmeden önce koruyucu olarak kullanılmalıdır.",
-          "not": "Zirai bayiden bu etken maddeyi içeren onaylı bir ürün hakkında bilgi alınız."
+          "isim": "Decis 2.5 EC",
+          "etken_madde": "Deltamethrin",
+          "uygulama_zamani": "Zararlı yoğunluğu eşik değeri aştığında",
+          "doz": "30 ml/da",
+          "bekleme_suresi": "14 gün",
+          "oneri": "Zararlı yoğunluğu eşik değerini aştığında uygulanmalıdır."
         }
       ]
     },
     {
       "isim": "Kımıl (İnsektisit)",
       "aciklama": "Süneye benzer yapıda, taneleri emerek kalite kaybına neden olur.",
-      "gorsel": "",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",
@@ -281,8 +520,10 @@
     },
     {
       "isim": "Ekin Kambur Böceği (İnsektisit)",
-      "aciklama": "Larvalar toprak altında kökleri kemirir; erginler ise başaklarda taneleri yer.",
-      "gorsel": "",
+      "aciklama": "Toprakta yaşayan larvaları bitki köklerine zarar verir.",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",
@@ -295,7 +536,9 @@
     {
       "isim": "Ekin Bambul Böceği (İnsektisit)",
       "aciklama": "Süt olum döneminde başaklarda taneleri kemirerek zarar verir.",
-      "gorsel": "",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",
@@ -307,8 +550,10 @@
     },
     {
       "isim": "Hububat Yaprak Bitleri (İnsektisit)",
-      "aciklama": "Bitki özsuyunu emerek zayıflatır, ayrıca virüs hastalıklarının taşınmasına neden olur.",
-      "gorsel": "",
+      "aciklama": "Yaprakları emerek bitkinin zayıflamasına ve verim kaybına neden olur.",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",
@@ -320,8 +565,10 @@
     },
     {
       "isim": "Thrips (İnsektisit)",
-      "aciklama": "Yaprak ve başaklarda beslenerek zarar verirler.",
-      "gorsel": "",
+      "aciklama": "Yapraklarda gümüşi lekeler oluşturarak bitkinin besin alımını engeller.",
+      "gorseller": [
+        "/static/hastaliklar/sariPas.png"
+      ],
       "ilaclar": [
         {
           "etken_madde": "Prothioconazole",

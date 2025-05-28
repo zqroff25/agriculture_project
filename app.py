@@ -4,12 +4,28 @@ import json
 import os
 from functools import lru_cache
 from typing import Dict, List, Any
+from datetime import datetime, timedelta
+from bs4 import BeautifulSoup
 
 app = Flask(__name__, static_folder='static')
 
 # Önbellek için global değişkenler
 _bitki_verileri_cache = None
 _bitki_arama_indeksi = None
+
+# Para birimi verileri için önbellek
+_currency_cache = None
+_currency_cache_time = None
+CACHE_DURATION = timedelta(minutes=5)  # 5 dakika önbellek süresi
+
+# Tarım borsası verileri için önbellek
+_commodity_cache = None
+_commodity_cache_time = None
+COMMODITY_CACHE_DURATION = timedelta(days=3)  # 3 gün önbellek süresi
+
+# Haber verileri için önbellek (Artık kalıcı depolama için kullanılacak)
+_news_cache_file = 'news_cache.json'
+NEWS_CACHE_DURATION_DAYS = 7 # Bir hafta
 
 def turkce_karakter_duzelt(bitki_adi):
     # Türkçe karakterleri düzeltme sözlüğü
@@ -282,25 +298,46 @@ def bitki_detay(bitki_adi):
         bitki = json.load(f)
     return render_template('bitki_detay.html', bitki=bitki)
 
-@app.route('/hastalik/<bitki_adi>/<hastalik_adi>')
-def hastalik_detay(bitki_adi, hastalik_adi):
+@app.route('/detay/<bitki_adi>/<item_adi>')
+def detay_sayfasi(bitki_adi, item_adi):
     # Türkçe karakterleri düzelt
     dosya_adi = turkce_karakter_duzelt(bitki_adi)
     # Bitki verilerini yükle
     with open(f'bitki_veri/{dosya_adi}.json', 'r', encoding='utf-8') as f:
         bitki = json.load(f)
     
-    # Hastalığı bul
-    hastalik = None
-    for h in bitki['hastaliklar']:
-        if h['isim'] == hastalik_adi:
-            hastalik = h
+    # İtemi bul (hastalık, herbisit veya insektisit olabilir)
+    item = None
+    item_type = None
+    
+    # Hastalıkları kontrol et
+    for h in bitki.get('hastaliklar', []):
+        if h['isim'] == item_adi:
+            item = h
+            item_type = 'hastalik'
             break
     
-    if hastalik is None:
-        return "Hastalık bulunamadı", 404
+    # Eğer bulunamazsa herbisitleri kontrol et
+    if item is None:
+        for herbisit in bitki.get('herbisitler', []):
+            if herbisit['isim'] == item_adi:
+                item = herbisit
+                item_type = 'herbisit'
+                break
     
-    return render_template('hastalik_detay.html', bitki=bitki, hastalik=hastalik)
+    # Eğer hala bulunamazsa insektisitleri kontrol et
+    if item is None:
+        for insektisit in bitki.get('insektisitler', []):
+            if insektisit['isim'] == item_adi:
+                item = insektisit
+                item_type = 'insektisit'
+                break
+
+    
+    if item is None:
+        return "Detay bulunamadı", 404
+    
+    return render_template('hastalik_detay.html', bitki=bitki, item=item, item_type=item_type)
 
 from flask import send_from_directory
 
@@ -501,101 +538,325 @@ def _olustur_arama_indeksi() -> Dict[str, List[Dict[str, Any]]]:
 
 @app.route('/api/search')
 def search():
-    query = request.args.get('q', '').lower().strip()
-    categories = request.args.getlist('categories')
-    
-    if not query or len(query) < 2:
-        return jsonify([])
-    
-    # Arama indeksini al
-    indeks = _olustur_arama_indeksi()
-    
-    # Tüm kategorileri birleştir
-    all_items = []
-    if not categories or 'bitki' in categories:
-        all_items.extend(indeks['bitkiler'])
-    if not categories or 'hastalik' in categories:
-        all_items.extend(indeks['hastaliklar'])
-    if not categories or 'ilac' in categories:
-        all_items.extend(indeks['ilaclar'])
-    
-    # Arama yap
-    results = []
-    for item in all_items:
-        # Anahtar kelimelerde ara
-        keyword_match = any(query in keyword.lower() for keyword in item['keywords'])
-        
-        # Başlık ve açıklamada ara
-        title_match = query in item['title'].lower()
-        desc_match = query in item['description'].lower()
-        
-        # Alt kategorilerde ara (varsa)
-        alt_kategori_match = False
-        if 'alt_kategoriler' in item:
-            alt_kategori_match = any(query in cat.lower() for cat in item['alt_kategoriler'])
-        
-        # Hastalıklarda ara (varsa)
-        hastalik_match = False
-        if 'hastaliklar' in item:
-            hastalik_match = any(query in h.lower() for h in item['hastaliklar'])
-        
-        # Bölgelerde ara (varsa)
-        bolge_match = False
-        if 'bolgeler' in item:
-            bolge_match = any(query in b.lower() for b in item['bolgeler'])
-        
-        # Belirtilerde ara (varsa)
-        belirti_match = False
-        if 'belirtiler' in item:
-            belirti_match = any(query in b.lower() for b in item['belirtiler'])
-        
-        # Dönemlerde ara (varsa)
-        donem_match = False
-        if 'donem' in item:
-            donem_match = any(query in d.lower() for d in item['donem'])
-        
-        # Eğer herhangi bir eşleşme varsa sonuçlara ekle
-        if (keyword_match or title_match or desc_match or 
-            alt_kategori_match or hastalik_match or bolge_match or 
-            belirti_match or donem_match):
-            
-            # Sonuç öğesini oluştur
-            result_item = {
-                'type': item['type'],
-                'title': item['title'],
-                'description': item['description'],
-                'icon': item['icon'],
-                'link': item['link']
-            }
-            
-            # Eşleşme türünü belirt (öne çıkarma için)
-            if title_match:
-                result_item['match_type'] = 'title'
-            elif keyword_match:
-                result_item['match_type'] = 'keyword'
-            elif hastalik_match:
-                result_item['match_type'] = 'hastalik'
-            elif alt_kategori_match:
-                result_item['match_type'] = 'alt_kategori'
-            else:
-                result_item['match_type'] = 'other'
-            
-            # Eşleşen içeriği vurgulamak için ek bilgiler
-            if 'detay' in item:
-                result_item['detay'] = item['detay']
-            
-            results.append(result_item)
-    
-    # Sonuçları önceliklendir
-    results.sort(key=lambda x: {
-        'title': 1,
-        'keyword': 2,
-        'hastalik': 3,
-        'alt_kategori': 4,
-        'other': 5
-    }.get(x.get('match_type', 'other'), 5))
-    
+    # API'ye gönderilecek sorgu parametrelerini al
+    query = request.args.get('q', '')
+    categories = request.args.getlist('categories') # Birden fazla kategori seçilebilir
+
+    if not query:
+        return jsonify([]) # Boş sorguda boş sonuç döndür
+
+    # Arama fonksiyonunu çağır
+    results = _arama(query, categories)
+
     return jsonify(results)
+
+@app.route('/borsa')
+def borsa():
+    # Tarım borsası verilerini şablona gönder
+    commodity_prices = get_commodity_prices()
+    return render_template('borsa.html', commodity_prices=commodity_prices)
+
+def get_currency_rates():
+    """Para birimi verilerini çeker ve önbelleğe alır."""
+    global _currency_cache, _currency_cache_time
+    
+    # Önbellekteki veri hala geçerli mi kontrol et
+    if _currency_cache is not None and _currency_cache_time is not None:
+        if datetime.now() - _currency_cache_time < CACHE_DURATION:
+            return _currency_cache
+    
+    try:
+        # ExchangeRate-API'den veri çek (ücretsiz API)
+        response = requests.get('https://open.er-api.com/v6/latest/USD')
+        data = response.json()
+        
+        if data['result'] == 'success':
+            # TRY kuru
+            try_rate = data['rates']['TRY']
+            
+            # Euro kuru için ayrı bir istek
+            eur_response = requests.get('https://open.er-api.com/v6/latest/EUR')
+            eur_data = eur_response.json()
+            eur_rate = eur_data['rates']['TRY'] if eur_data['result'] == 'success' else None
+            
+            # Altın fiyatı için ayrı bir API (örnek olarak)
+            # Not: Gerçek uygulamada güvenilir bir altın API'si kullanılmalıdır
+            gold_price = try_rate * 0.0005  # Örnek hesaplama
+            
+            # Değişim oranları (örnek veriler)
+            # Gerçek uygulamada geçmiş verilerden hesaplanmalıdır
+            usd_change = round((try_rate - 31.5) / 31.5 * 100, 2)  # Örnek değişim
+            eur_change = round((eur_rate - 34.2) / 34.2 * 100, 2) if eur_rate else 0
+            gold_change = round((gold_price - 1950) / 1950 * 100, 2)  # Örnek değişim
+            
+            _currency_cache = {
+                'usd': {'price': try_rate, 'change': usd_change},
+                'eur': {'price': eur_rate, 'change': eur_change},
+                'gold': {'price': gold_price, 'change': gold_change}
+            }
+            _currency_cache_time = datetime.now()
+            
+            return _currency_cache
+    except Exception as e:
+        print(f"Para birimi verileri alınamadı: {e}")
+        # Hata durumunda örnek veriler
+        return {
+            'usd': {'price': 31.50, 'change': 0.5},
+            'eur': {'price': 34.20, 'change': -0.3},
+            'gold': {'price': 1950.00, 'change': 1.2}
+        }
+
+@app.route('/api/currency-rates')
+def currency_rates():
+    """Para birimi verilerini JSON olarak döndürür."""
+    rates = get_currency_rates()
+    return jsonify(rates)
+
+def get_commodity_prices():
+    """Tarım borsası verilerini çeker ve önbelleğe alır."""
+    global _commodity_cache, _commodity_cache_time
+    
+    # Önbellekteki veri hala geçerli mi kontrol et
+    if _commodity_cache is not None and _commodity_cache_time is not None:
+        if datetime.now() - _commodity_cache_time < COMMODITY_CACHE_DURATION:
+            return _commodity_cache
+    
+    try:
+        # TMO'nun günlük fiyat listesi API'si (örnek URL)
+        # Not: Gerçek API endpoint'i ve authentication bilgileri gerekli olacaktır
+        response = requests.get('https://www.tmo.gov.tr/tr/fiyat-listesi')
+        
+        # HTML içeriğini parse et
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Örnek veri yapısı (gerçek uygulamada API'den gelen veriye göre düzenlenecek)
+        commodity_data = {
+            'bugday': {
+                'ekmeklik': {
+                    'price': 8500,
+                    'change': 1.2,
+                    'unit': 'TL/Ton',
+                    'date': datetime.now().strftime('%d.%m.%Y')
+                },
+                'makarnalik': {
+                    'price': 8200,
+                    'change': 0.8,
+                    'unit': 'TL/Ton',
+                    'date': datetime.now().strftime('%d.%m.%Y')
+                }
+            },
+            'arpa': {
+                'yemlik': {
+                    'price': 7200,
+                    'change': -0.5,
+                    'unit': 'TL/Ton',
+                    'date': datetime.now().strftime('%d.%m.%Y')
+                },
+                'maltlik': {
+                    'price': 7500,
+                    'change': 0.3,
+                    'unit': 'TL/Ton',
+                    'date': datetime.now().strftime('%d.%m.%Y')
+                }
+            },
+            'misir': {
+                'yemlik': {
+                    'price': 6100,
+                    'change': 1.5,
+                    'unit': 'TL/Ton',
+                    'date': datetime.now().strftime('%d.%m.%Y')
+                }
+            },
+            'pancar': {
+                'seker': {
+                    'price': 1200,
+                    'change': 0.0,
+                    'unit': 'TL/Ton',
+                    'date': datetime.now().strftime('%d.%m.%Y')
+                }
+            },
+            'aycicegi': {
+                'yaglik': {
+                    'price': 15000,
+                    'change': 2.1,
+                    'unit': 'TL/Ton',
+                    'date': datetime.now().strftime('%d.%m.%Y')
+                }
+            },
+            'nohut': {
+                'kirmizi': {
+                    'price': 25000,
+                    'change': 1.8,
+                    'unit': 'TL/Ton',
+                    'date': datetime.now().strftime('%d.%m.%Y')
+                },
+                'sari': {
+                    'price': 24500,
+                    'change': 1.5,
+                    'unit': 'TL/Ton',
+                    'date': datetime.now().strftime('%d.%m.%Y')
+                },
+                'beyaz': {
+                    'price': 26000,
+                    'change': 2.0,
+                    'unit': 'TL/Ton',
+                    'date': datetime.now().strftime('%d.%m.%Y')
+                }
+            }
+        }
+        
+        _commodity_cache = commodity_data
+        _commodity_cache_time = datetime.now()
+        
+        return _commodity_cache
+        
+    except Exception as e:
+        print(f"Tarım borsası verileri alınamadı: {e}")
+        # Hata durumunda örnek veriler
+        return {
+            'bugday': {
+                'ekmeklik': {'price': 8500, 'change': 1.2, 'unit': 'TL/Ton', 'date': datetime.now().strftime('%d.%m.%Y')},
+                'makarnalik': {'price': 8200, 'change': 0.8, 'unit': 'TL/Ton', 'date': datetime.now().strftime('%d.%m.%Y')}
+            },
+            'arpa': {
+                'yemlik': {'price': 7200, 'change': -0.5, 'unit': 'TL/Ton', 'date': datetime.now().strftime('%d.%m.%Y')}
+            },
+            'misir': {
+                'yemlik': {'price': 6100, 'change': 1.5, 'unit': 'TL/Ton', 'date': datetime.now().strftime('%d.%m.%Y')}
+            },
+            'nohut': {
+                'kirmizi': {'price': 25000, 'change': 1.8, 'unit': 'TL/Ton', 'date': datetime.now().strftime('%d.%m.%Y')},
+                'sari': {'price': 24500, 'change': 1.5, 'unit': 'TL/Ton', 'date': datetime.now().strftime('%d.%m.%Y')}
+            }
+        }
+
+@app.route('/api/commodity-prices')
+def commodity_prices():
+    """Tarım borsası verilerini JSON olarak döndürür."""
+    prices = get_commodity_prices()
+    return jsonify(prices)
+
+def get_news():
+    """Tarım ve Orman Bakanlığı haber arşivinden haber verilerini çeker ve kaydeder."""
+    news_list = []
+    cache_data = None
+    cache_timestamp = None
+    url = 'https://www.tarimorman.gov.tr/HaberArsivi'
+
+    # 1. Önbellek dosyasından veriyi oku
+    if os.path.exists(_news_cache_file):
+        try:
+            with open(_news_cache_file, 'r', encoding='utf-8') as f:
+                cache_content = json.load(f)
+                cache_data = cache_content.get('news', [])
+                # Zaman damgasını datetime objesine çevir
+                timestamp_str = cache_content.get('timestamp')
+                if timestamp_str:
+                    cache_timestamp = datetime.fromisoformat(timestamp_str)
+        except Exception as e:
+            print(f"Haber önbellek dosyası okunamadı: {e}")
+            cache_data = None # Okuma hatası durumunda önbelleği geçersiz say
+
+    # 2. Önbelleğin geçerliliğini kontrol et
+    is_cache_valid = False
+    if cache_timestamp and cache_data is not None:
+        # Önbellek süresi bir haftadan azsa geçerli
+        if datetime.now() - cache_timestamp < timedelta(days=NEWS_CACHE_DURATION_DAYS):
+            is_cache_valid = True
+
+    # 3. Veriyi çekme veya önbelleği kullanma mantığı
+    if is_cache_valid:
+        # Önbellek geçerliyse, önbellekteki veriyi döndür
+        print("Haberler önbellekten getirildi.")
+        return cache_data
+    else:
+        # Önbellek geçerli değilse (yok veya süresi dolmuş)
+        # Sadece Pazartesi günleri scraping yap - Bu kontrol şu an yorum satırında, Pazartesi güncellemesi için etkinleştirilebilir.
+        # if datetime.now().weekday() == 0: # Pazartesi = 0
+        print("Önbellek süresi dolmuş veya dosya yok. Scraping yapılıyor...")
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            # Haber öğelerini bulma ve parse etme mantığı (önceki güncellemelerden)
+            news_list = []
+            iletisim_baslik = soup.find('h4', string='\xa0 İLETİŞİM')
+
+            if iletisim_baslik:
+                haber_basliklari = iletisim_baslik.find_all_previous('h4')
+                haber_basliklari.reverse()
+            else:
+                haber_basliklari = soup.find_all('h4')
+
+            for baslik_elementi in haber_basliklari:
+                try:
+                    title = baslik_elementi.get_text(strip=True)
+                    if title == 'Haber Arşivi':
+                        continue
+
+                    link_elementi = baslik_elementi.find_next_sibling('a')
+                    link = link_elementi['href'] if link_elementi and link_elementi.has_attr('href') else '#'
+
+                    ozet_elementi = None
+                    current_element = baslik_elementi.next_sibling
+                    while current_element:
+                        if current_element.name == 'p':
+                            ozet_elementi = current_element
+                            break
+                        current_element = current_element.next_sibling
+
+                    summary = ozet_elementi.get_text(strip=True)[:200] + '...' if ozet_elementi else 'Özet bulunamadı.'
+                    image = '' # Görsel yok
+
+                    news_list.append({
+                        'title': title,
+                        'summary': summary,
+                        'link': link,
+                        'image': image
+                    })
+                except Exception as e:
+                    print(f"Haber öğesi parse edilirken hata oluştu: {e}")
+                    continue
+
+            # Başarılı scraping sonrası veriyi kaydet
+            try:
+                with open(_news_cache_file, 'w', encoding='utf-8') as f:
+                    json.dump({'news': news_list, 'timestamp': datetime.now().isoformat()}, f, ensure_ascii=False, indent=4)
+                print("Yeni haberler dosyaya kaydedildi.")
+            except Exception as e:
+                print(f"Haber önbellek dosyasına yazılamadı: {e}")
+
+            return news_list
+
+        except requests.exceptions.RequestException as e:
+            print(f"Haber kaynağına bağlanırken hata oluştu: {e}")
+            # Bağlantı hatası durumunda, eğer eski veri varsa onu kullan
+            if cache_data is not None:
+                 print("Bağlantı hatası, eski önbellek verisi kullanılıyor.")
+                 return cache_data
+            return [] # Hata ve eski veri yoksa boş liste
+        except Exception as e:
+            print(f"Haber verileri alınamadı veya parse hatası: {e}")
+             # Hata durumunda, eğer eski veri varsa onu kullan
+            if cache_data is not None:
+                 print("Parse hatası, eski önbellek verisi kullanılıyor.")
+                 return cache_data
+            return [] # Hata ve eski veri yoksa boş liste
+        # else:
+            # Pazartesi değil ve önbellek süresi dolmuş, eski veri varsa onu kullan
+            # if cache_data is not None:
+            #      print("Önbellek süresi dolmuş ama bugün Pazartesi değil, eski önbellek verisi kullanılıyor.")
+            #      return cache_data
+            # print("Önbellek süresi dolmuş veya dosya yok. Bugün Pazartesi değil, scraping yapılmıyor.")
+            # return [] # Pazartesi değil ve eski veri yok
+
+@app.route('/api/news')
+def news_api():
+    """Haber verilerini JSON olarak döndürür."""
+    news_data = get_news()
+    return jsonify(news_data)
 
 if __name__ == '__main__':
     app.run(debug=True, port=8501)

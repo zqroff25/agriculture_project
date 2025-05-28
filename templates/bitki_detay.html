@@ -32,39 +32,71 @@
         <img src="{{ bitki.gorsel }}" alt="{{ bitki.isim }}" class="w-32 h-32 object-cover rounded-lg shadow-md mb-2">
         <h1 class="text-2xl font-bold text-gray-800">{{ bitki.isim }}</h1>
     </div>
-    <!-- Hastalıklar Bölümü -->
+    <!-- Hastalıklar, Herbisitler ve İnsektisitler Bölümü -->
     <div class="max-w-4xl mx-auto px-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-6 ml-4">Hastalıklar</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {% for hastalik in bitki.hastaliklar[:40] %}
-            <a href="/hastalik/{{ bitki.isim }}/{{ hastalik.isim }}" class="block">
+        <h2 class="text-xl font-semibold text-gray-800 mb-6 ml-4">Detaylı Bilgiler</h2>
+
+        {% if bitki.hastaliklar %}
+        <h3 class="text-lg font-semibold text-gray-700 mb-4 ml-4">Hastalıklar</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {% for item in bitki.hastaliklar[:40] %}
+            <a href="/detay/{{ bitki.isim }}/{{ item.isim }}" class="block">
                 <div class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-shadow duration-300">
                     <div class="flex items-center mb-3">
-                        <img src="/static/sariPas.png" alt="{{ hastalik.isim }}" class="w-20 h-20 object-cover rounded-lg mr-4">
+                        <img src="/static/sariPas.png" alt="{{ item.isim }}" class="w-20 h-20 object-cover rounded-lg mr-4">
                         <div>
-                            <h3 class="text-md font-semibold text-gray-800">{{ hastalik.isim }}</h3>
-                            <p class="text-sm text-gray-600 mt-1">{{ hastalik.aciklama }}</p>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-semibold text-primary mb-2">Önerilen İlaçlar</h4>
-                        <div class="flex flex-wrap gap-4">
-                            {% for ilac in hastalik.ilaclar %}
-                            <div class="flex flex-col items-center bg-gray-50 rounded-lg p-2 w-28 shadow-sm">
-                                <span class="text-xs font-medium text-gray-800">{{ ilac.etken_madde }}</span>
-                                <span class="text-[10px] text-gray-500">{{ ilac.uygulama_zamani }}</span>
-                            </div>
-                            {% endfor %}
+                            <h3 class="text-md font-semibold text-gray-800">{{ item.isim }}</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ item.aciklama | default('Açıklama mevcut değil', true) }}</p>
                         </div>
                     </div>
                 </div>
             </a>
             {% endfor %}
         </div>
+        {% endif %}
+
+        {% if bitki.herbisitler %}
+        <h3 class="text-lg font-semibold text-gray-700 mb-4 ml-4">Yabani Otlar (Herbisitler)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {% for item in bitki.herbisitler[:40] %}
+            <a href="/detay/{{ bitki.isim }}/{{ item.isim }}" class="block">
+                <div class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-shadow duration-300">
+                    <div class="flex items-center mb-3">
+                        <img src="/static/sariPas.png" alt="{{ item.isim }}" class="w-20 h-20 object-cover rounded-lg mr-4">
+                        <div>
+                            <h3 class="text-md font-semibold text-gray-800">{{ item.isim }}</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ item.aciklama | default('Açıklama mevcut değil', true) }}</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if bitki.insektisitler %}
+        <h3 class="text-lg font-semibold text-gray-700 mb-4 ml-4">Zararlılar (İnsektisitler)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {% for item in bitki.insektisitler[:40] %}
+            <a href="/detay/{{ bitki.isim }}/{{ item.isim }}" class="block">
+                <div class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-shadow duration-300">
+                    <div class="flex items-center mb-3">
+                        <img src="/static/sariPas.png" alt="{{ item.isim }}" class="w-20 h-20 object-cover rounded-lg mr-4">
+                        <div>
+                            <h3 class="text-md font-semibold text-gray-800">{{ item.isim }}</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ item.aciklama | default('Açıklama mevcut değil', true) }}</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <div class="text-center mt-6 mb-8">
             <a href="https://bku.tarimorman.gov.tr/Arama/Index?BitkiAdi={{ bitki.isim }}" target="_blank"
                class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-green-700 transition duration-300 font-semibold text-base">
-                Tümünü Gör
+                Tüm Detayları Gör (Resmi Kaynak)
             </a>
         </div>
     </div>

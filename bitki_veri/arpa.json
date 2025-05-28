@@ -3,44 +3,242 @@
   "gorsel": "https://readdy.ai/api/search-image?query=icon%2C%203D%20vector%20illustration%2C%20barley%20plant%20with%20golden%20spikes%2C%20detailed%20stalks%2C%20agricultural%20crop%2C%20the%20icon%20should%20take%20up%2070%25%20of%20the%20frame%2C%20isolated%20on%20white%20background%2C%20centered%20composition%2C%20soft%20lighting%2C%20no%20shadows%2C%20clean%20and%20modern%20look%2C%20single%20object%20focus&width=200&height=200&seq=22&orientation=squarish",
   "hastaliklar": [
     {
-      "isim": "Sarı Pas (Puccinia striiformis)",
-      "aciklama": "Arpada yapraklarda sarımsı çizgiler ve lekeler oluşturan, verim kaybına yol açan bir mantar hastalığıdır.",
-      "gorsel": "static/sariPas.png",
-      "ilaclar": [
-        {
-          "isim": "Tilt 250 EC",
-          "aktif_madde": "Propikonazol",
-          "gorsel": "/static/ilac.jpg"
-        },
-        {
-          "isim": "Folicur",
-          "aktif_madde": "Tebuconazole",
-          "gorsel": "/static/ilac.jpg"
-        }
-      ]
-    },
-    {
-      "isim": "Kök Çürüklüğü (Fusarium spp.)",
-      "aciklama": "Kök ve kök boğazında kahverengi çürüklükler oluşturan, bitkinin gelişimini engelleyen bir hastalıktır.",
-      "gorsel": "https://www.plantwise.org/KnowledgeBank/ImageShow?imgid=28538",
+      "isim": "Arpa Yaprak Lekesi (Ağ Benek)",
+      "aciklama": "Yapraklarda ağ şeklinde kahverengi lekeler oluşturan yaygın bir mantar hastalığıdır.",
+      "belirtiler": [
+        "Yapraklarda küçük, koyu kahverengi noktalar",
+        "Noktaların etrafında sarı hale",
+        "Lekelerin ağ şeklinde birleşmesi",
+        "Yaprakların kuruması",
+        "Verim kaybı"
+      ],
+      "mudahale_zamani": "Kardeşlenme döneminden bayrak yaprağı dönemine kadar",
+      "onlemler": [
+        "Dayanıklı çeşit kullanımı",
+        "Temiz tohumluk kullanımı",
+        "Ekim nöbeti",
+        "Anız yönetimi"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/arpa_yaprak_lekesi_1.jpg",
+        "/static/hastaliklar/arpa_yaprak_lekesi_2.jpg"
+      ],
       "ilaclar": [
         {
           "isim": "Amistar",
-          "aktif_madde": "Azoxystrobin",
-          "gorsel": "/static/ilac.jpg"
+          "etken_madde": "Azoxystrobin",
+          "uygulama_zamani": "İlk belirtiler görüldüğünde",
+          "oneri": "Hastalık riski yüksek olduğunda koruyucu olarak kullanılabilir."
         }
       ]
     },
     {
-      "isim": "Kahverengi Pas (Puccinia triticina)",
-      "aciklama": "Yapraklarda kahverengi, tozlu püstüller oluşturan, yaygın bir buğday hastalığıdır.",
-      "gorsel": "https://www.plantwise.org/KnowledgeBank/ImageShow?imgid=28537",
+      "isim": "Arpa Küllemesi",
+      "aciklama": "Yaprak, sap ve başaklarda beyaz, pudramsı örtü oluşturan bir mantar hastalığıdır.",
+      "belirtiler": [
+        "Yapraklarda beyaz, pudramsı lekeler",
+        "Lekelerin büyümesi ve birleşmesi",
+        "Yaprakların sararması ve kuruması",
+        "Bitki gelişiminde gerilik",
+        "Verim kaybı"
+      ],
+      "mudahale_zamani": "Kardeşlenme döneminden başaklanmaya kadar",
+      "onlemler": [
+        "Dayanıklı çeşit kullanımı",
+        "Sık ekimden kaçınma",
+        "Aşırı azotlu gübre kullanımından kaçınma",
+        "Tarla temizliği"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/arpa_kuleme_1.jpg",
+        "/static/hastaliklar/arpa_kuleme_2.jpg"
+      ],
       "ilaclar": [
         {
-          "isim": "Rex Duo",
-          "aktif_madde": "Epoxiconazole + Fenpropimorph",
-          "gorsel": "/static/ilac.jpg"
+          "isim": "Tilmor 240 EC",
+          "etken_madde": "Prothioconazole + Tebuconazole",
+          "uygulama_zamani": "İlk belirtiler görüldüğünde",
+          "oneri": "Hastalık belirtileri görüldüğünde uygulanmalıdır."
         }
+      ]
+    },
+    {
+      "isim": "Arpa Çizgili Hastalığı",
+      "aciklama": "Yapraklarda sarımsı kahverengi çizgiler oluşturan, tohum kaynaklı bir hastalıktır.",
+      "belirtiler": [
+        "Yapraklarda uzun, sarımsı kahverengi çizgiler",
+        "Yaprakların yırtılması",
+        "Bitki gelişiminde bozulma",
+        "Başaklarda şekil bozukluğu",
+        "Verim kaybı"
+      ],
+      "mudahale_zamani": "Ekim öncesi tohum ilaçlaması",
+      "onlemler": [
+        "Sertifikalı tohum kullanımı",
+        "Tohum ilaçlaması",
+        "Ekim nöbeti"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/arpa_cizgili_hastalik_1.jpg",
+        "/static/hastaliklar/arpa_cizgili_hastalik_2.jpg"
+      ],
+      "ilaclar": [
+        {
+          "isim": "Raxil 2 FS",
+          "etken_madde": "Tebuconazole",
+          "uygulama_zamani": "Ekim öncesi tohum ilaçlaması",
+          "oneri": "Tohum ilaçlaması şeklinde uygulanmalıdır."
+        }
+      ]
+    },
+    {
+      "isim": "Arpa Rastığı",
+      "aciklama": "Başaklarda siyah toz yığını şeklinde sporlar oluşturan, tohum kaynaklı bir hastalıktır.",
+      "belirtiler": [
+        "Başaklarda siyah toz yığını",
+        "Sporların rüzgarla yayılması",
+        "Bitkilerin cüce kalması",
+        "Verim kaybı"
+      ],
+      "mudahale_zamani": "Ekim öncesi tohum ilaçlaması",
+      "onlemler": [
+        "Sertifikalı tohum kullanımı",
+        "Tohum ilaçlaması",
+        "Temiz tohumluk kullanımı"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/arpa_rastik_1.jpg",
+        "/static/hastaliklar/arpa_rastik_2.jpg"
+      ],
+      "ilaclar": [
+        {
+          "isim": "Raxil 2 FS",
+          "etken_madde": "Tebuconazole",
+          "uygulama_zamani": "Ekim öncesi tohum ilaçlaması",
+          "oneri": "Tohum ilaçlaması şeklinde uygulanmalıdır."
+        }
+      ]
+    }
+  ],
+  "herbisitler": [
+    {
+      "isim": "Yabani Yulaf",
+      "aciklama": "Arpa tarlalarında sık görülen, hızlı gelişen ve rekabetçi bir yabani ottur.",
+      "belirtiler": [
+        "Arpa tarlasında yabani yulaf bitkileri",
+        "Yüksek boylu ve hızlı büyüyen yapı",
+        "Arpa gelişimini engelleme",
+        "Verim kaybı"
+      ],
+      "mudahale_zamani": "Çıkış sonrası, yabani yulaf 2-4 yapraklı iken",
+      "onlemler": [
+        "Temiz tohumluk kullanımı",
+        "Tarla temizliği",
+        "Ekim nöbeti"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/yabani_yulaf_1.jpg",
+        "/static/hastaliklar/yabani_yulaf_2.jpg"
+      ],
+      "onerilen_herbisitler": [
+        "Puma Super",
+        "Axial"
+      ]
+    },
+    {
+      "isim": "Tilki Kuyruğu",
+      "aciklama": "Arpa üretimini olumsuz etkileyen, popülasyonu hızla artan önemli bir yabani ottur.",
+      "belirtiler": [
+        "Tarlada tilki kuyruğu bitkileri",
+        "Yoğun salkım yapısı",
+        "Arpa ile besin ve su rekabeti",
+        "Verim kaybı"
+      ],
+      "mudahale_zamani": "Çıkış sonrası, tilki kuyruğu 1-3 yapraklı iken",
+      "onlemler": [
+        "Temiz tohumluk kullanımı",
+        "Tarla temizliği",
+        "Farklı etki mekanizmasına sahip herbisit kullanımı"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/tilki_kuyrugu_1.jpg",
+        "/static/hastaliklar/tilki_kuyrugu_2.jpg"
+      ],
+      "onerilen_herbisitler": [
+        "Atlantis WG",
+        "Sequence"
+      ]
+    }
+  ],
+  "insektisitler": [
+    {
+      "isim": "Süne",
+      "aciklama": "Arpada 'kurtboğazı' ve 'akbaşak' zararına neden olan önemli bir zararlıdır.",
+      "belirtiler": [
+        "Kardeşlenme döneminde 'kurtboğazı' zararı (orta göz yaprağının kuruması)",
+        "Başaklanma döneminde 'akbaşak' zararı (başakların beyazlaması)",
+        "Tanelerde emgi izleri",
+        "Kalite ve verim kaybı"
+      ],
+      "mudahale_zamani": "Zararlı yoğunluğu eşik değerine ulaştığında",
+      "onlemler": [
+        "Erken ekim",
+        "Hasat sonrası tarla temizliği",
+        "Biyolojik mücadele"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/sune_1.jpg",
+        "/static/hastaliklar/sune_2.jpg"
+      ],
+      "onerilen_insektisitler": [
+        "Decis 2.5 EC",
+        "K-Othrine Partix"
+      ]
+    },
+    {
+      "isim": "Kımıl",
+      "aciklama": "Süneye benzer zarar oluşturan, özellikle başak döneminde tehlikeli olan bir zararlıdır.",
+      "belirtiler": [
+        "Başaklarda tane emgisi",
+        "Tanelerde büzülme",
+        "Kalite kaybı"
+      ],
+      "mudahale_zamani": "Zararlı yoğunluğu eşik değerine ulaştığında (özellikle süt olum dönemi)",
+      "onlemler": [
+        "Tarla temizliği",
+        "Ekim nöbeti",
+        "Biyolojik mücadele"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/kimil_1.jpg",
+        "/static/hastaliklar/kimil_2.jpg"
+      ],
+      "onerilen_insektisitler": [
+        "Confidor 200 OD",
+        "Actara 25 WG"
+      ]
+    },
+    {
+      "isim": "Hububat Yaprak Bitleri",
+      "aciklama": "Bitki özsuyunu emerek zayıflığa ve verim kaybına neden olan zararlılardır. Virüs hastalıklarını da taşıyabilirler.",
+      "belirtiler": [
+        "Yapraklarda ve saplarda bitki biti kolonileri",
+        "Yapraklarda sararma ve kıvrılma",
+        "Bitki gelişiminde gerilik",
+        "Bal çiği salgısı"
+      ],
+      "mudahale_zamani": "Yaprak biti yoğunluğu eşik değerine ulaştığında",
+      "onlemler": [
+        "Doğal düşmanları koruma (uğur böcekleri, gelin böcekleri vb.)",
+        "Gereksiz ilaçlamadan kaçınma"
+      ],
+      "gorseller": [
+        "/static/hastaliklar/yaprak_biti_1.jpg",
+        "/static/hastaliklar/yaprak_biti_2.jpg"
+      ],
+      "onerilen_insektisitler": [
+        "Pirimor 50 WG",
+        "Mospilan 20 SP"
       ]
     }
   ]

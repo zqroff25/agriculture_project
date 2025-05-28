@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ hastalik.isim }} - {{ bitki.isim }} Hastalığı</title>
+    <title>{% if item_type == 'hastalik' %}{{ item.isim }} - {{ bitki.isim }} Hastalığı{% elif item_type == 'herbisit' %}{{ item.isim }} - {{ bitki.isim }} Yabani Otu{% elif item_type == 'insektisit' %}{{ item.isim }} - {{ bitki.isim }} Zararlısı{% else %}{{ item.isim }} Detay{% endif %}</title>
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
@@ -167,15 +167,91 @@
         }
     </style>
     <script>
-        // Global değişkenleri tanımla
-        window.diseaseImages = [
-            {% for gorsel in hastalik.gorseller %}
-            "{{ gorsel }}"{% if not loop.last %},{% endif %}
-            {% endfor %}
-        ];
-        window.totalSlides = {{ hastalik.gorseller|length }};
+        let currentSlide = 0;
+        let totalSlides = 0;
+        let sliderItems = [];
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const sliderDotsContainer = document.getElementById('sliderDots');
+        const sliderContainer = document.querySelector('.slider-container');
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (sliderContainer) {
+                totalSlides = parseInt(sliderContainer.dataset.totalSlides || '0');
+                sliderItems = document.querySelectorAll('.slider-item img');
+                updateDots();
+                // Görsel tıklama olaylarını ekle
+                sliderItems.forEach((item, index) => {
+                    item.onclick = () => openModal(index);
+                });
+                
+                // Slider gezinti butonları
+                const prevButton = document.querySelector('.slider-nav.slider-prev');
+                const nextButton = document.querySelector('.slider-nav.slider-next');
+
+                if(prevButton) prevButton.onclick = () => changeSlide(-1);
+                if(nextButton) nextButton.onclick = () => changeSlide(1);
+
+            }
+        });
+
+        function openModal(index) {
+            currentSlide = index;
+            modalImage.src = sliderItems[currentSlide].src;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide >= totalSlides) {
+                currentSlide = 0;
+            }
+            if (currentSlide < 0) {
+                currentSlide = totalSlides - 1;
+            }
+            modalImage.src = sliderItems[currentSlide].src;
+            updateDots();
+        }
+
+        function updateDots() {
+            if (sliderDotsContainer) {
+                 sliderDotsContainer.innerHTML = ''; // Clear existing dots
+                 for (let i = 0; i < totalSlides; i++) {
+                     const dot = document.createElement('div');
+                     dot.classList.add('slider-dot');
+                     if (i === currentSlide) {
+                         dot.classList.add('active');
+                     }
+                     dot.dataset.index = i;
+                     dot.onclick = () => { currentSlide = i; updateDots(); };
+                     sliderDotsContainer.appendChild(dot);
+                 }
+            }
+        }
+
+        // Modal dışına tıklayınca kapat
+        if (modal) {
+             modal.onclick = (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            };
+        }
+       
+        // ESC tuşuna basınca kapat
+        document.addEventListener('keydown', (e) => {
+            if (modal && e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+
     </script>
-    <script src="{{ url_for('static', filename='js/hastalik_detay.js') }}"></script>
 </head>
 <body class="bg-gray-50">
     <!-- Geri Dön Butonu -->
@@ -185,91 +261,143 @@
         </a>
     </div>
 
-    <!-- Bitki ve Hastalık Başlığı -->
+    <!-- Bitki ve Detay Başlığı -->
     <div class="flex flex-col items-center mt-2 mb-6">
         <img src="{{ bitki.gorsel }}" alt="{{ bitki.isim }}" class="w-32 h-32 object-cover rounded-lg shadow-md mb-2">
-        <h1 class="text-2xl font-bold text-gray-800">{{ hastalik.isim }}</h1>
-        <p class="text-sm text-gray-600 mt-1">{{ bitki.isim }} Hastalığı</p>
+        <h1 class="text-2xl font-bold text-gray-800">{{ item.isim }}</h1>
+        <p class="text-sm text-gray-600 mt-1">{% if item_type == 'hastalik' %}{{ bitki.isim }} Hastalığı{% elif item_type == 'herbisit' %}{{ bitki.isim }} Yabani Otu{% elif item_type == 'insektisit' %}{{ bitki.isim }} Zararlısı{% endif %}</p>
     </div>
 
-    <!-- Hastalık Detayları -->
+    <!-- Detaylar -->
     <div class="max-w-4xl mx-auto px-6">
         <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <!-- Hastalık Görseli Slider -->
+            <!-- Görsel Slider -->
             <div class="slider-container mb-6" 
-                 data-total-slides="{{ hastalik.gorseller|length }}"
-                 data-images='{{ hastalik.gorseller|tojson|safe }}'>
+                 data-total-slides="{{ item.gorseller|length if item.gorseller else 0 }}">
                 <div class="slider" id="diseaseSlider">
-                    {% for gorsel in hastalik.gorseller %}
+                    {% for gorsel in item.gorseller %}
                     <div class="slider-item">
-                        <img src="{{ gorsel }}" alt="{{ hastalik.isim }}" 
-                             class="w-full h-64 object-cover rounded-lg shadow-md cursor-pointer hover:opacity-90 transition-opacity"
-                             data-index="{{ loop.index0 }}">
+                        <img src="{{ gorsel }}" alt="{{ item.isim }}" 
+                               class="w-full h-64 object-cover rounded-lg shadow-md cursor-pointer hover:opacity-90 transition-opacity">
                     </div>
                     {% endfor %}
                 </div>
-                <div class="slider-nav slider-prev">
-                    <i class="ri-arrow-left-s-line"></i>
-                </div>
-                <div class="slider-nav slider-next">
-                    <i class="ri-arrow-right-s-line"></i>
-                </div>
-                <div class="slider-dots" id="sliderDots">
-                    {% for gorsel in hastalik.gorseller %}
-                    <div class="slider-dot {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}"></div>
-                    {% endfor %}
-                </div>
+                {% if item.gorseller and item.gorseller|length > 1 %}
+                <div class="slider-nav slider-prev"><i class="ri-arrow-left-s-line"></i></div>
+                <div class="slider-nav slider-next"><i class="ri-arrow-right-s-line"></i></div>
+                {% endif %}
+                <div class="slider-dots" id="sliderDots"></div>
             </div>
 
-            <!-- Hastalık Açıklaması -->
+            <!-- Detay Bilgileri -->
             <div class="mb-8">
-                <h2 class="text-xl font-semibold text-gray-800 mb-3">Hastalık Hakkında</h2>
-                <p class="text-gray-600 leading-relaxed">{{ hastalik.aciklama }}</p>
+                <h2 class="text-xl font-semibold text-gray-800 mb-3">{% if item_type == 'hastalik' %}Hastalık Hakkında{% elif item_type == 'herbisit' %}Yabani Ot Hakkında{% elif item_type == 'insektisit' %}Zararlı Hakkında{% else %}Detaylar{% endif %}</h2>
+                <p class="text-gray-600 leading-relaxed">{{ item.aciklama | default('Açıklama mevcut değil.', true) }}</p>
             </div>
 
-            <!-- İlaç Bilgileri -->
+            <!-- Spesifik Bilgiler (Belirtiler, Müdahale, Önlemler, İlaçlar vb.) -->
             <div class="space-y-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Tedavi Bilgileri</h2>
-                {% for ilac in hastalik.ilaclar %}
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <h3 class="text-lg font-semibold text-primary mb-2">Etken Madde</h3>
-                            <p class="text-gray-700">{{ ilac.etken_madde }}</p>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-primary mb-2">Uygulama Zamanı</h3>
-                            <p class="text-gray-700">{{ ilac.uygulama_zamani }}</p>
-                        </div>
-                        <div class="md:col-span-2">
-                            <h3 class="text-lg font-semibold text-primary mb-2">Öneriler</h3>
-                            <p class="text-gray-700">{{ ilac.oneri }}</p>
-                        </div>
-                        <div class="md:col-span-2">
-                            <h3 class="text-lg font-semibold text-primary mb-2">Önemli Not</h3>
-                            <p class="text-gray-700">{{ ilac.not }}</p>
+                 {% if item_type == 'hastalik' %}
+                    {% if item.belirtiler %}
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-800 mb-2">Belirtiler</h3>
+                        <ul class="list-disc list-inside text-gray-700">
+                            {% for belirti in item.belirtiler %}
+                            <li>{{ belirti }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% if item.mudahale %}
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-800 mb-2">Müdahale Zamanı</h3>
+                        <p class="text-gray-700">{{ item.mudahale }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if item.onlemler %}
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-800 mb-2">Önlemler</h3>
+                        <ul class="list-disc list-inside text-gray-700">
+                            {% for onlem in item.onlemler %}
+                            <li>{{ onlem }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% if item.ilaclar %}
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-800 mb-2">Önerilen İlaçlar</h3>
+                        <div class="flex flex-wrap gap-4">
+                            {% for ilac in item.ilaclar %}
+                            <div class="flex flex-col items-center bg-gray-50 rounded-lg p-2 w-28 shadow-sm">
+                                <span class="text-xs font-medium text-gray-800">{{ ilac.etken_madde }}</span>
+                                <span class="text-[10px] text-gray-500">{{ ilac.uygulama_zamani }}</span>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
-                </div>
-                {% endfor %}
+                    {% endif %}
+                 {% elif item_type == 'herbisit' %}
+                     {% if item.onerilen_herbisitler %}
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-800 mb-2">Önerilen Herbisitler</h3>
+                        <ul class="list-disc list-inside text-gray-700">
+                            {% for herbisit in item.onerilen_herbisitler %}
+                            <li>{{ herbisit }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                     {% if item.belirtiler %}
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-800 mb-2">Belirtiler</h3>
+                        <ul class="list-disc list-inside text-gray-700">
+                            {% for belirti in item.belirtiler %}
+                            <li>{{ belirti }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                 {% elif item_type == 'insektisit' %}
+                     {% if item.onerilen_insektisitler %}
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-800 mb-2">Önerilen İnsektisitler</h3>
+                        <ul class="list-disc list-inside text-gray-700">
+                            {% for insektisit in item.onerilen_insektisitler %}
+                            <li>{{ insektisit }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                      {% if item.belirtiler %}
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-800 mb-2">Belirtiler</h3>
+                        <ul class="list-disc list-inside text-gray-700">
+                            {% for belirti in item.belirtiler %}
+                            <li>{{ belirti }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                 {% endif %}
+
             </div>
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal Yapısı (görsel büyütme için) -->
     <div id="imageModal" class="modal">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
         <div class="modal-content">
-            <div class="modal-close">
-                <i class="ri-close-line"></i>
-            </div>
-            <div class="modal-nav modal-prev">
-                <i class="ri-arrow-left-s-line"></i>
-            </div>
-            <img id="modalImage" class="modal-image" src="" alt="Büyük görsel">
-            <div class="modal-nav modal-next">
-                <i class="ri-arrow-right-s-line"></i>
-            </div>
+            <img id="modalImage" class="modal-image" src="" alt="">
+            <span class="modal-nav modal-prev" onclick="changeSlide(-1)">&#10094;</span>
+            <span class="modal-nav modal-next" onclick="changeSlide(1)">&#10095;</span>
         </div>
     </div>
+
+   
 </body>
 </html> 
