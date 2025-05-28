@@ -624,7 +624,7 @@ def get_commodity_prices():
     try:
         # TMO'nun günlük fiyat listesi API'si (örnek URL)
         # Not: Gerçek API endpoint'i ve authentication bilgileri gerekli olacaktır
-        response = requests.get('https://www.tmo.gov.tr/tr/fiyat-listesi')
+        response = requests.get('https://www.tmo.gov.tr/tr/fiyat-listesi', timeout=30)
         
         # HTML içeriğini parse et
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -775,7 +775,7 @@ def get_news():
         # if datetime.now().weekday() == 0: # Pazartesi = 0
         print("Önbellek süresi dolmuş veya dosya yok. Scraping yapılıyor...")
         try:
-            response = requests.get(url, timeout=10)
+            response = requests.get(url, timeout=30)
             response.raise_for_status()
 
             soup = BeautifulSoup(response.content, 'html.parser')
