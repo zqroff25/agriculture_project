@@ -6,6 +6,8 @@ from functools import lru_cache
 from typing import Dict, List, Any
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
+from scrapers.tmo_scraper import get_tmo_prices
+from scrapers.news_scraper import get_news
 
 app = Flask(__name__, static_folder='static')
 
@@ -553,7 +555,7 @@ def search():
 @app.route('/borsa')
 def borsa():
     # Tarım borsası verilerini şablona gönder
-    commodity_prices = get_commodity_prices()
+    commodity_prices = get_tmo_prices()
     return render_template('borsa.html', commodity_prices=commodity_prices)
 
 def get_currency_rates():
@@ -612,245 +614,11 @@ def currency_rates():
     rates = get_currency_rates()
     return jsonify(rates)
 
-def get_commodity_prices():
-    """Tarım borsası verilerini çeker ve önbelleğe alır."""
-    global _commodity_cache, _commodity_cache_time
-    
-    # Önbellekteki veri hala geçerli mi kontrol et
-    if _commodity_cache is not None and _commodity_cache_time is not None:
-        if datetime.now() - _commodity_cache_time < COMMODITY_CACHE_DURATION:
-            return _commodity_cache
-    
-    try:
-        # TMO'nun günlük fiyat listesi API'si (örnek URL)
-        # Not: Gerçek API endpoint'i ve authentication bilgileri gerekli olacaktır
-        response = requests.get('https://www.tmo.gov.tr/tr/fiyat-listesi', timeout=30)
-        
-        # HTML içeriğini parse et
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Örnek veri yapısı (gerçek uygulamada API'den gelen veriye göre düzenlenecek)
-        commodity_data = {
-            'bugday': {
-                'ekmeklik': {
-                    'price': 8500,
-                    'change': 1.2,
-                    'unit': 'TL/Ton',
-                    'date': datetime.now().strftime('%d.%m.%Y')
-                },
-                'makarnalik': {
-                    'price': 8200,
-                    'change': 0.8,
-                    'unit': 'TL/Ton',
-                    'date': datetime.now().strftime('%d.%m.%Y')
-                }
-            },
-            'arpa': {
-                'yemlik': {
-                    'price': 7200,
-                    'change': -0.5,
-                    'unit': 'TL/Ton',
-                    'date': datetime.now().strftime('%d.%m.%Y')
-                },
-                'maltlik': {
-                    'price': 7500,
-                    'change': 0.3,
-                    'unit': 'TL/Ton',
-                    'date': datetime.now().strftime('%d.%m.%Y')
-                }
-            },
-            'misir': {
-                'yemlik': {
-                    'price': 6100,
-                    'change': 1.5,
-                    'unit': 'TL/Ton',
-                    'date': datetime.now().strftime('%d.%m.%Y')
-                }
-            },
-            'pancar': {
-                'seker': {
-                    'price': 1200,
-                    'change': 0.0,
-                    'unit': 'TL/Ton',
-                    'date': datetime.now().strftime('%d.%m.%Y')
-                }
-            },
-            'aycicegi': {
-                'yaglik': {
-                    'price': 15000,
-                    'change': 2.1,
-                    'unit': 'TL/Ton',
-                    'date': datetime.now().strftime('%d.%m.%Y')
-                }
-            },
-            'nohut': {
-                'kirmizi': {
-                    'price': 25000,
-                    'change': 1.8,
-                    'unit': 'TL/Ton',
-                    'date': datetime.now().strftime('%d.%m.%Y')
-                },
-                'sari': {
-                    'price': 24500,
-                    'change': 1.5,
-                    'unit': 'TL/Ton',
-                    'date': datetime.now().strftime('%d.%m.%Y')
-                },
-                'beyaz': {
-                    'price': 26000,
-                    'change': 2.0,
-                    'unit': 'TL/Ton',
-                    'date': datetime.now().strftime('%d.%m.%Y')
-                }
-            }
-        }
-        
-        _commodity_cache = commodity_data
-        _commodity_cache_time = datetime.now()
-        
-        return _commodity_cache
-        
-    except Exception as e:
-        print(f"Tarım borsası verileri alınamadı: {e}")
-        # Hata durumunda örnek veriler
-        return {
-            'bugday': {
-                'ekmeklik': {'price': 8500, 'change': 1.2, 'unit': 'TL/Ton', 'date': datetime.now().strftime('%d.%m.%Y')},
-                'makarnalik': {'price': 8200, 'change': 0.8, 'unit': 'TL/Ton', 'date': datetime.now().strftime('%d.%m.%Y')}
-            },
-            'arpa': {
-                'yemlik': {'price': 7200, 'change': -0.5, 'unit': 'TL/Ton', 'date': datetime.now().strftime('%d.%m.%Y')}
-            },
-            'misir': {
-                'yemlik': {'price': 6100, 'change': 1.5, 'unit': 'TL/Ton', 'date': datetime.now().strftime('%d.%m.%Y')}
-            },
-            'nohut': {
-                'kirmizi': {'price': 25000, 'change': 1.8, 'unit': 'TL/Ton', 'date': datetime.now().strftime('%d.%m.%Y')},
-                'sari': {'price': 24500, 'change': 1.5, 'unit': 'TL/Ton', 'date': datetime.now().strftime('%d.%m.%Y')}
-            }
-        }
-
 @app.route('/api/commodity-prices')
 def commodity_prices():
     """Tarım borsası verilerini JSON olarak döndürür."""
-    prices = get_commodity_prices()
+    prices = get_tmo_prices()
     return jsonify(prices)
-
-def get_news():
-    """Tarım ve Orman Bakanlığı haber arşivinden haber verilerini çeker ve kaydeder."""
-    news_list = []
-    cache_data = None
-    cache_timestamp = None
-    url = 'https://www.tarimorman.gov.tr/HaberArsivi'
-
-    # 1. Önbellek dosyasından veriyi oku
-    if os.path.exists(_news_cache_file):
-        try:
-            with open(_news_cache_file, 'r', encoding='utf-8') as f:
-                cache_content = json.load(f)
-                cache_data = cache_content.get('news', [])
-                # Zaman damgasını datetime objesine çevir
-                timestamp_str = cache_content.get('timestamp')
-                if timestamp_str:
-                    cache_timestamp = datetime.fromisoformat(timestamp_str)
-        except Exception as e:
-            print(f"Haber önbellek dosyası okunamadı: {e}")
-            cache_data = None # Okuma hatası durumunda önbelleği geçersiz say
-
-    # 2. Önbelleğin geçerliliğini kontrol et
-    is_cache_valid = False
-    if cache_timestamp and cache_data is not None:
-        # Önbellek süresi bir haftadan azsa geçerli
-        if datetime.now() - cache_timestamp < timedelta(days=NEWS_CACHE_DURATION_DAYS):
-            is_cache_valid = True
-
-    # 3. Veriyi çekme veya önbelleği kullanma mantığı
-    if is_cache_valid:
-        # Önbellek geçerliyse, önbellekteki veriyi döndür
-        print("Haberler önbellekten getirildi.")
-        return cache_data
-    else:
-        # Önbellek geçerli değilse (yok veya süresi dolmuş)
-        # Sadece Pazartesi günleri scraping yap - Bu kontrol şu an yorum satırında, Pazartesi güncellemesi için etkinleştirilebilir.
-        # if datetime.now().weekday() == 0: # Pazartesi = 0
-        print("Önbellek süresi dolmuş veya dosya yok. Scraping yapılıyor...")
-        try:
-            response = requests.get(url, timeout=30)
-            response.raise_for_status()
-
-            soup = BeautifulSoup(response.content, 'html.parser')
-
-            # Haber öğelerini bulma ve parse etme mantığı (önceki güncellemelerden)
-            news_list = []
-            iletisim_baslik = soup.find('h4', string='\xa0 İLETİŞİM')
-
-            if iletisim_baslik:
-                haber_basliklari = iletisim_baslik.find_all_previous('h4')
-                haber_basliklari.reverse()
-            else:
-                haber_basliklari = soup.find_all('h4')
-
-            for baslik_elementi in haber_basliklari:
-                try:
-                    title = baslik_elementi.get_text(strip=True)
-                    if title == 'Haber Arşivi':
-                        continue
-
-                    link_elementi = baslik_elementi.find_next_sibling('a')
-                    link = link_elementi['href'] if link_elementi and link_elementi.has_attr('href') else '#'
-
-                    ozet_elementi = None
-                    current_element = baslik_elementi.next_sibling
-                    while current_element:
-                        if current_element.name == 'p':
-                            ozet_elementi = current_element
-                            break
-                        current_element = current_element.next_sibling
-
-                    summary = ozet_elementi.get_text(strip=True)[:200] + '...' if ozet_elementi else 'Özet bulunamadı.'
-                    image = '' # Görsel yok
-
-                    news_list.append({
-                        'title': title,
-                        'summary': summary,
-                        'link': link,
-                        'image': image
-                    })
-                except Exception as e:
-                    print(f"Haber öğesi parse edilirken hata oluştu: {e}")
-                    continue
-
-            # Başarılı scraping sonrası veriyi kaydet
-            try:
-                with open(_news_cache_file, 'w', encoding='utf-8') as f:
-                    json.dump({'news': news_list, 'timestamp': datetime.now().isoformat()}, f, ensure_ascii=False, indent=4)
-                print("Yeni haberler dosyaya kaydedildi.")
-            except Exception as e:
-                print(f"Haber önbellek dosyasına yazılamadı: {e}")
-
-            return news_list
-
-        except requests.exceptions.RequestException as e:
-            print(f"Haber kaynağına bağlanırken hata oluştu: {e}")
-            # Bağlantı hatası durumunda, eğer eski veri varsa onu kullan
-            if cache_data is not None:
-                 print("Bağlantı hatası, eski önbellek verisi kullanılıyor.")
-                 return cache_data
-            return [] # Hata ve eski veri yoksa boş liste
-        except Exception as e:
-            print(f"Haber verileri alınamadı veya parse hatası: {e}")
-             # Hata durumunda, eğer eski veri varsa onu kullan
-            if cache_data is not None:
-                 print("Parse hatası, eski önbellek verisi kullanılıyor.")
-                 return cache_data
-            return [] # Hata ve eski veri yoksa boş liste
-        # else:
-            # Pazartesi değil ve önbellek süresi dolmuş, eski veri varsa onu kullan
-            # if cache_data is not None:
-            #      print("Önbellek süresi dolmuş ama bugün Pazartesi değil, eski önbellek verisi kullanılıyor.")
-            #      return cache_data
-            # print("Önbellek süresi dolmuş veya dosya yok. Bugün Pazartesi değil, scraping yapılmıyor.")
-            # return [] # Pazartesi değil ve eski veri yok
 
 @app.route('/api/news')
 def news_api():
