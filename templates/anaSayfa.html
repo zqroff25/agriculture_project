@@ -123,70 +123,47 @@ transform: scale(0.98);
 </div>
 <!-- Search Bar -->
 <div class="relative mb-6">
-    <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i class="ri-search-line text-gray-400"></i>
-        </div>
-        <input type="text" 
-               id="searchInput"
-               class="search-input bg-white w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-primary transition-colors" 
-               placeholder="Bitki, hastalık veya ilaç türü ara..."
-               autocomplete="off">
-        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-            <button id="searchFilterBtn" class="text-gray-400 hover:text-primary">
-                <i class="ri-filter-3-line"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- Arama Filtreleri -->
-    <div id="searchFilters" class="hidden mt-2 bg-white rounded-lg shadow-lg p-4 border border-gray-200">
-        <div class="space-y-3">
-            <h3 class="text-sm font-medium text-gray-700">Kategoriler</h3>
-            <div class="flex flex-wrap gap-2">
-                <label class="inline-flex items-center">
-                    <input type="checkbox" class="form-checkbox text-primary" value="bitki" checked>
-                    <span class="ml-2 text-sm text-gray-600">Bitkiler</span>
-                </label>
-                <label class="inline-flex items-center">
-                    <input type="checkbox" class="form-checkbox text-primary" value="hastalik" checked>
-                    <span class="ml-2 text-sm text-gray-600">Hastalıklar</span>
-                </label>
-                <label class="inline-flex items-center">
-                    <input type="checkbox" class="form-checkbox text-primary" value="ilac" checked>
-                    <span class="ml-2 text-sm text-gray-600">İlaç Türleri</span>
-                </label>
+    <form id="searchForm" class="relative">
+        <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="ri-search-line text-gray-400"></i>
             </div>
+            <input type="text" 
+                   id="searchInput"
+                   class="search-input bg-white w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-primary transition-colors" 
+                   placeholder="Bitki, hastalık veya ilaç türü ara..."
+                   autocomplete="off">
         </div>
-    </div>
+    </form>
 
     <!-- Arama Sonuçları -->
     <div id="searchResults" class="hidden absolute z-50 w-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto">
-        <!-- Popüler Aramalar -->
-        <div class="p-4 border-b border-gray-200">
-            <h3 class="text-sm font-medium text-gray-700 mb-2">Popüler Aramalar</h3>
-            <div class="flex flex-wrap gap-2">
-                <button class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full hover:bg-primary hover:text-white transition-colors">
-                    Sarı Pas
-                </button>
-                <button class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full hover:bg-primary hover:text-white transition-colors">
-                    Süne
-                </button>
-                <button class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full hover:bg-primary hover:text-white transition-colors">
-                    Pancar
-                </button>
-                <button class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full hover:bg-primary hover:text-white transition-colors">
-                    Fungisit
-                </button>
-            </div>
-        </div>
-
-        <!-- Arama Sonuçları Listesi -->
         <div id="searchResultsList" class="divide-y divide-gray-200">
             <!-- Sonuçlar JavaScript ile doldurulacak -->
         </div>
     </div>
 </div>
+<!-- Arama Filtreleri -->
+<div id="searchFilters" class="hidden mt-2 bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+    <div class="space-y-3">
+        <h3 class="text-sm font-medium text-gray-700">Kategoriler</h3>
+        <div class="flex flex-wrap gap-2">
+            <label class="inline-flex items-center">
+                <input type="checkbox" class="form-checkbox text-primary" value="bitki" checked>
+                <span class="ml-2 text-sm text-gray-600">Bitkiler</span>
+            </label>
+            <label class="inline-flex items-center">
+                <input type="checkbox" class="form-checkbox text-primary" value="hastalik" checked>
+                <span class="ml-2 text-sm text-gray-600">Hastalıklar</span>
+            </label>
+            <label class="inline-flex items-center">
+                <input type="checkbox" class="form-checkbox text-primary" value="ilac" checked>
+                <span class="ml-2 text-sm text-gray-600">İlaç Türleri</span>
+            </label>
+        </div>
+    </div>
+</div>
+
 <!-- Plant Selection Section -->
 <div class="mb-6">
 <div class="flex justify-between items-center mb-4">
@@ -554,23 +531,8 @@ if (navigator.geolocation) {
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     const searchResults = document.getElementById('searchResults');
-    const searchFilters = document.getElementById('searchFilters');
-    const searchFilterBtn = document.getElementById('searchFilterBtn');
     const searchResultsList = document.getElementById('searchResultsList');
     let searchTimeout;
-
-    // Popüler aramalar için tıklama olayı
-    document.querySelectorAll('#searchResults .flex-wrap button').forEach(button => {
-        button.addEventListener('click', () => {
-            searchInput.value = button.textContent.trim();
-            performSearch(button.textContent.trim());
-        });
-    });
-
-    // Arama filtresi toggle
-    searchFilterBtn.addEventListener('click', () => {
-        searchFilters.classList.toggle('hidden');
-    });
 
     // Arama input değişikliği
     searchInput.addEventListener('input', (e) => {
@@ -584,258 +546,79 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Debounce için timeout
         searchTimeout = setTimeout(() => {
-            performSearch(query);
+            fetch(`/api/search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(results => {
+                    searchResultsList.innerHTML = '';
+                    
+                    if (results.length === 0) {
+                        searchResultsList.innerHTML = `
+                            <div class="p-4 text-center text-gray-500">
+                                Sonuç bulunamadı
+                            </div>
+                        `;
+                    } else {
+                        results.forEach(result => {
+                            const resultElement = document.createElement('a');
+                            resultElement.href = result.link || '#';
+                            resultElement.className = 'block p-4 hover:bg-gray-50 transition-colors';
+
+                            const iconMap = {
+                                'bitki': 'ri-plant-line',
+                                'hastalik': 'ri-virus-line',
+                                'ilac': 'ri-medicine-bottle-line',
+                                'tmo': 'ri-money-dollar-circle-line',
+                                'news': 'ri-newspaper-line'
+                            };
+
+                            resultElement.innerHTML = `
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 flex items-center justify-center text-primary flex-shrink-0">
+                                        <i class="${iconMap[result.type] || 'ri-search-line'} text-xl"></i>
+                                    </div>
+                                    <div class="ml-3 flex-1">
+                                        <h3 class="text-sm font-medium text-gray-800">${result.title}</h3>
+                                        <p class="text-xs text-gray-600 mt-1">${result.content || ''}</p>
+                                        ${result.date ? `<span class="text-xs text-gray-500 mt-2 block">${result.date}</span>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                            searchResultsList.appendChild(resultElement);
+                        });
+                    }
+                    searchResults.classList.remove('hidden');
+                })
+                .catch(error => {
+                    console.error('Arama hatası:', error);
+                    searchResultsList.innerHTML = `
+                        <div class="p-4 text-center text-gray-500">
+                            Arama sırasında bir hata oluştu
+                        </div>
+                    `;
+                });
         }, 300);
     });
 
-    // Arama fonksiyonu
-    function performSearch(query) {
-        // Seçili kategorileri al
-        const selectedCategories = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-            .map(checkbox => checkbox.value);
-
-        // API'ye istek at
-        fetch(`/api/search?q=${encodeURIComponent(query)}&${selectedCategories.map(cat => `categories=${cat}`).join('&')}`)
-            .then(response => response.json())
-            .then(results => {
-                displayResults(results);
-            })
-            .catch(error => {
-                console.error('Arama hatası:', error);
-                searchResultsList.innerHTML = `
-                    <div class="p-4 text-center text-gray-500">
-                        Arama sırasında bir hata oluştu
-                    </div>
-                `;
-            });
-    }
-
-    // Sonuçları görüntüleme
-    function displayResults(results) {
-        searchResultsList.innerHTML = '';
-
-        if (results.length === 0) {
-            searchResultsList.innerHTML = `
-                <div class="p-4 text-center text-gray-500">
-                    Sonuç bulunamadı
-                </div>
-            `;
-        } else {
-            // Sonuçları doğrudan listele
-            results.forEach(result => {
-                const resultElement = document.createElement('a');
-                resultElement.href = result.link;
-                resultElement.className = 'block p-4 hover:bg-gray-50 transition-colors';
-
-                // Eşleşme türüne göre vurgulama
-                let highlightClass = '';
-                switch(result.match_type) {
-                    case 'title':
-                        highlightClass = 'text-primary font-semibold';
-                        break;
-                    case 'keyword':
-                        highlightClass = 'text-primary';
-                        break;
-                    case 'hastalik':
-                        highlightClass = 'text-orange-600';
-                        break;
-                    case 'alt_kategori':
-                        highlightClass = 'text-blue-600';
-                        break;
-                    default:
-                        highlightClass = 'text-gray-800';
-                        break;
-                }
-
-                // Detay bilgilerini hazırla
-                let detayHTML = '';
-                if (result.detay) {
-                    if (result.type === 'bitki') {
-                        // Bitki detayları
-                        const hastaliklar = result.detay.hastaliklar || [];
-                        if (hastaliklar.length > 0) {
-                            detayHTML += `
-                                <div class="mt-2">
-                                    <span class="text-xs text-gray-500">İlgili Hastalıklar:</span>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        ${hastaliklar.map(h => `
-                                            <span class="px-2 py-0.5 text-xs bg-orange-100 text-orange-800 rounded-full">
-                                                ${h.isim}
-                                            </span>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }
-
-                        if (result.detay.cesitler && result.detay.cesitler.length > 0) {
-                            detayHTML += `
-                                <div class="mt-2">
-                                    <span class="text-xs text-gray-500">Çeşitler:</span>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        ${result.detay.cesitler.map(c => `
-                                            <span class="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
-                                                ${c}
-                                            </span>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                         if (result.detay.bolgeler && result.detay.bolgeler.length > 0) {
-                            detayHTML += `
-                                <div class="mt-2">
-                                    <span class="text-xs text-gray-500">Yetiştiği Bölgeler:</span>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        ${result.detay.bolgeler.map(b => `
-                                            <span class="px-2 py-0.5 text-xs bg-gray-200 text-gray-700 rounded-full">
-                                                ${b}
-                                            </span>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }
-
-                    } else if (result.type === 'hastalik') {
-                        // Hastalık detayları
-                        if (result.detay.belirtiler && result.detay.belirtiler.length > 0) {
-                            detayHTML += `
-                                <div class="mt-2">
-                                    <span class="text-xs text-gray-500">Belirtiler:</span>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        ${result.detay.belirtiler.map(b => `
-                                            <span class="px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded-full">
-                                                ${b}
-                                            </span>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }
-
-                        if (result.detay.mudahale && result.detay.mudahale.length > 0) {
-                            detayHTML += `
-                                <div class="mt-2">
-                                    <span class="text-xs text-gray-500">Müdahale:</span>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        ${result.detay.mudahale.map(m => `
-                                            <span class="px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded-full">
-                                                ${m}
-                                            </span>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                         if (result.detay.donem && result.detay.donem.length > 0) {
-                            detayHTML += `
-                                <div class="mt-2">
-                                    <span class="text-xs text-gray-500">Görüldüğü Dönem:</span>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        ${result.detay.donem.map(d => `
-                                            <span class="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">
-                                                ${d}
-                                            </span>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }
-
-                    } else if (result.type === 'ilac') {
-                        // İlaç detayları
-                        if (result.detay.kullanim_alanlari && result.detay.kullanim_alanlari.length > 0) {
-                            detayHTML += `
-                                <div class="mt-2">
-                                    <span class="text-xs text-gray-500">Kullanım Alanları:</span>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        ${result.detay.kullanim_alanlari.map(k => `
-                                            <span class="px-2 py-0.5 text-xs bg-gray-100 text-gray-800 rounded-full">
-                                                ${k}
-                                            </span>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                        if (result.detay.hedef_hastaliklar && result.detay.hedef_hastaliklar.length > 0) {
-                             detayHTML += `
-                                <div class="mt-2">
-                                    <span class="text-xs text-gray-500">Hedef Hastalıklar:</span>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        ${result.detay.hedef_hastaliklar.map(h => `
-                                            <span class="px-2 py-0.5 text-xs bg-orange-100 text-orange-800 rounded-full">
-                                                ${h}
-                                            </span>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                        if (result.detay.hedef_zararlilar && result.detay.hedef_zararlilar.length > 0) {
-                             detayHTML += `
-                                <div class="mt-2">
-                                    <span class="text-xs text-gray-500">Hedef Zararlılar:</span>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        ${result.detay.hedef_zararlilar.map(z => `
-                                            <span class="px-2 py-0.5 text-xs bg-orange-100 text-orange-800 rounded-full">
-                                                ${z}
-                                            </span>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                         if (result.detay.uygulama_zamani && result.detay.uygulama_zamani.length > 0) {
-                            detayHTML += `
-                                <div class="mt-2">
-                                    <span class="text-xs text-gray-500">Uygulama Zamanı:</span>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        ${result.detay.uygulama_zamani.map(u => `
-                                            <span class="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">
-                                                ${u}
-                                            </span>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    }
-                }
-
-                resultElement.innerHTML = `
-                    <div class="flex items-start">
-                        <div class="w-8 h-8 flex items-center justify-center text-primary flex-shrink-0">
-                            <i class="${result.icon} text-xl"></i>
-                        </div>
-                        <div class="ml-3 flex-1">
-                            <h4 class="text-sm ${highlightClass}">${result.title}</h4>
-                            <p class="text-xs text-gray-600 mt-1">${result.description}</p>
-                            ${result.match_type === 'hastalik' ? 
-                                `<span class="inline-block mt-1 px-2 py-0.5 text-xs bg-orange-100 text-orange-800 rounded-full">
-                                    Hastalık eşleşmesi
-                                </span>` : ''}
-                            ${result.match_type === 'alt_kategori' ? 
-                                `<span class="inline-block mt-1 px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
-                                    Alt kategori eşleşmesi
-                                </span>` : ''}
-                            ${detayHTML}
-                        </div>
-                    </div>
-                `;
-                searchResultsList.appendChild(resultElement);
-            });
-        }
-
-        searchResults.classList.remove('hidden');
-    }
+    // Form submit olayını engelle
+    document.getElementById('searchForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+    });
 
     // Dışarı tıklandığında sonuçları gizle
     document.addEventListener('click', (e) => {
         if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
             searchResults.classList.add('hidden');
-            searchFilters.classList.add('hidden');
+        }
+    });
+
+    // Enter tuşuna basıldığında ilk sonuca git
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const firstResult = searchResultsList.querySelector('a');
+            if (firstResult) {
+                e.preventDefault();
+                window.location.href = firstResult.href;
+            }
         }
     });
 });

@@ -525,20 +525,44 @@ def bilgi_detay(konu):
     
     return render_template('bilgi_detay.html', konu=konu_icerigi)
 
+def normalize_text(text):
+    """Türkçe karakterleri normalize eder ve metni küçük harfe çevirir."""
+    tr_chars = {
+        'ı': 'i', 'İ': 'i', 'ğ': 'g', 'Ğ': 'g',
+        'ü': 'u', 'Ü': 'u', 'ş': 's', 'Ş': 's',
+        'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c'
+    }
+    if text is None:
+        return ""
+    text = str(text).lower()
+    for tr_char, eng_char in tr_chars.items():
+        text = text.replace(tr_char, eng_char)
+    return text
+
 def _yukle_bitki_verileri() -> Dict[str, Any]:
     """Tüm bitki verilerini JSON dosyalarından yükler ve önbelleğe alır."""
     global _bitki_verileri_cache
     if _bitki_verileri_cache is not None:
+        print("Bitki verileri önbellekten yüklendi.") # Debug print
         return _bitki_verileri_cache
     
     bitki_verileri = {}
     bitki_veri_klasoru = 'bitki_veri'
     
+    if not os.path.exists(bitki_veri_klasoru):
+        print(f"Hata: 'bitki_veri' klasörü bulunamadı: {os.path.abspath(bitki_veri_klasoru)}") # Debug print
+        return {}
+        
     for dosya in os.listdir(bitki_veri_klasoru):
         if dosya.endswith('.json'):
             bitki_adi = dosya[:-5]  # .json uzantısını kaldır
-            with open(os.path.join(bitki_veri_klasoru, dosya), 'r', encoding='utf-8') as f:
-                bitki_verileri[bitki_adi] = json.load(f)
+            dosya_yolu = os.path.join(bitki_veri_klasoru, dosya)
+            try:
+                with open(dosya_yolu, 'r', encoding='utf-8') as f:
+                    bitki_verileri[bitki_adi] = json.load(f)
+                print(f"'{dosya}' başarıyla yüklendi.") # Debug print
+            except Exception as e:
+                print(f"Hata: '{dosya}' okunurken hata oluştu: {e}") # Debug print
     
     _bitki_verileri_cache = bitki_verileri
     return bitki_verileri
@@ -547,8 +571,10 @@ def _olustur_arama_indeksi() -> Dict[str, List[Dict[str, Any]]]:
     """Bitki verilerinden arama indeksi oluşturur."""
     global _bitki_arama_indeksi
     if _bitki_arama_indeksi is not None:
+        print("Arama indeksi önbellekten yüklendi.") # Debug print
         return _bitki_arama_indeksi
     
+    print("Arama indeksi oluşturuluyor...") # Debug print
     bitki_verileri = _yukle_bitki_verileri()
     indeks = {
         'bitkiler': [],
@@ -564,40 +590,58 @@ def _olustur_arama_indeksi() -> Dict[str, List[Dict[str, Any]]]:
             'description': bitki.get('aciklama', ''),
             'icon': 'ri-plant-line',
             'link': f'/bitki/{bitki_adi}',
-            'keywords': [bitki['isim'].lower()] + 
-                       [h['isim'].lower() for h in bitki.get('hastaliklar', [])] +
-                       [bitki_adi.lower()],
+            'keywords': [normalize_text(bitki.get('isim', ''))] + 
+                       [normalize_text(h.get('isim', '')) for h in bitki.get('hastaliklar', [])] +
+                       [normalize_text(bitki_adi)],
             'alt_kategoriler': bitki.get('cesitler', []),
-            'hastaliklar': [h['isim'].lower() for h in bitki.get('hastaliklar', [])],
+            'hastaliklar': [normalize_text(h.get('isim', '')) for h in bitki.get('hastaliklar', [])],
             'bolgeler': bitki.get('bolgeler', []),
             'detay': bitki  # Tüm detay bilgileri
         }
         indeks['bitkiler'].append(bitki_item)
         
-        # Hastalık bilgilerini indekse ekle
+        # Hastalık bilgilerini indekse ekle (bitki detayından gelenler)
         for hastalik in bitki.get('hastaliklar', []):
             hastalik_item = {
                 'type': 'hastalik',
-                'title': hastalik['isim'],
+                'title': hastalik.get('isim', ''),
                 'description': hastalik.get('aciklama', ''),
                 'icon': 'ri-virus-line',
-                'link': f'/hastalik/{bitki_adi}/{turkce_karakter_duzelt(hastalik["isim"])}',
-                'keywords': [hastalik['isim'].lower()] + 
-                           [bitki['isim'].lower()] +
-                           hastalik.get('belirtiler', []) +
-                           hastalik.get('mudahale', []) +
-                           hastalik.get('onlemler', []),
-                'etkilenen_bitkiler': [bitki['isim'].lower()],
+                'link': f'/detay/{bitki_adi}/{turkce_karakter_duzelt(hastalik.get('isim', ''))}', # Link düzeltildi
+                'keywords': [normalize_text(hastalik.get('isim', ''))] + 
+                           [normalize_text(bitki.get('isim', ''))] +
+                           [normalize_text(b) for b in hastalik.get('belirtiler', [])] +
+                           [normalize_text(m) for m in hastalik.get('mudahale', [])] +
+                           [normalize_text(o) for o in hastalik.get('onlemler', [])],
+                'etkilenen_bitkiler': [normalize_text(bitki.get('isim', ''))],
                 'belirtiler': hastalik.get('belirtiler', []),
                 'donem': hastalik.get('donem', []),
                 'detay': hastalik  # Tüm detay bilgileri
             }
             indeks['hastaliklar'].append(hastalik_item)
-    
-    # Mevcut ilaç verilerini de ekle
-    indeks['ilaclar'] = arama_verileri['ilaclar']
-    
+            
+    # Mevcut ilaç verilerini de indekse ekle (varsa)
+    # Bu kısım arama_verileri sözlüğünden geliyor, eğer kaldırılmadıysa buraya eklenir
+    if 'ilaclar' in globals() and isinstance(arama_verileri.get('ilaclar'), list):
+         for ilac in arama_verileri['ilaclar']:
+             ilac_item = {
+                'type': 'ilac',
+                'title': ilac.get('title', ''),
+                'description': ilac.get('description', ''),
+                'icon': ilac.get('icon', 'ri-medicine-bottle-line'),
+                'link': ilac.get('link', '#'),
+                'keywords': [normalize_text(ilac.get('title', ''))] +
+                            [normalize_text(d) for d in ilac.get('description', '').split()] +
+                            [normalize_text(k) for k in ilac.get('keywords', [])],
+                'kullanim_alanlari': ilac.get('kullanim_alanlari', []),
+                'hastaliklar': ilac.get('hastaliklar', []),
+                'uygulama_zamani': ilac.get('uygulama_zamani', []),
+                'detay': ilac
+             }
+             indeks['ilaclar'].append(ilac_item)
+
     _bitki_arama_indeksi = indeks
+    print("Arama indeksi oluşturuldu.") # Debug print
     return indeks
 
 @app.route('/arama')
@@ -606,53 +650,87 @@ def arama():
     if not query:
         return render_template('arama.html', results=[], query='')
     
-    # TMO verilerini oku
-    tmo_data = []
+    # Arama indeksini oluştur
+    arama_indeksi = _olustur_arama_indeksi()
+    results = []
+    
+    # Bitkilerde ara
+    for bitki in arama_indeksi['bitkiler']:
+        if (query.lower() in bitki['title'].lower() or 
+            query.lower() in bitki['description'].lower() or 
+            any(query.lower() in k.lower() for k in bitki['keywords'])):
+            results.append({
+                'type': 'bitki',
+                'title': bitki['title'],
+                'content': bitki['description'],
+                'link': bitki['link'],
+                'icon': bitki['icon']
+            })
+    
+    # Hastalıklarda ara
+    for hastalik in arama_indeksi['hastaliklar']:
+        if (query.lower() in hastalik['title'].lower() or 
+            query.lower() in hastalik['description'].lower() or 
+            any(query.lower() in k.lower() for k in hastalik['keywords'])):
+            results.append({
+                'type': 'hastalik',
+                'title': hastalik['title'],
+                'content': hastalik['description'],
+                'link': hastalik['link'],
+                'icon': hastalik['icon']
+            })
+    
+    # İlaçlarda ara
+    for ilac in arama_indeksi['ilaclar']:
+        if (query.lower() in ilac['title'].lower() or 
+            query.lower() in ilac['description'].lower() or 
+            any(query.lower() in k.lower() for k in ilac['keywords'])):
+            results.append({
+                'type': 'ilac',
+                'title': ilac['title'],
+                'content': ilac['description'],
+                'link': ilac['link'],
+                'icon': ilac['icon']
+            })
+    
+    # TMO verilerini oku ve ara
     try:
         with open('data/tmo_data.json', 'r', encoding='utf-8') as f:
             tmo_data = json.load(f)
+            for item in tmo_data:
+                if (query.lower() in item['urun'].lower() or 
+                    query.lower() in item['birim'].lower() or 
+                    query.lower() in str(item['fiyat']).lower()):
+                    results.append({
+                        'type': 'tmo',
+                        'title': item['urun'],
+                        'content': f"Birim: {item['birim']}, Fiyat: {item['fiyat']} TL",
+                        'date': item.get('tarih', '')
+                    })
     except:
         pass
     
-    # Haberleri oku
-    news_data = []
+    # Haberleri oku ve ara
     try:
         with open('data/news_data.json', 'r', encoding='utf-8') as f:
             news_data = json.load(f)
+            for item in news_data:
+                if (query.lower() in item['title'].lower() or 
+                    query.lower() in item['content'].lower()):
+                    results.append({
+                        'type': 'news',
+                        'title': item['title'],
+                        'content': item['content'],
+                        'date': item['date'],
+                        'link': item['link']
+                    })
     except:
         pass
     
-    # TMO verilerinde ara
-    tmo_results = []
-    for item in tmo_data:
-        if (query.lower() in item['urun'].lower() or 
-            query.lower() in item['birim'].lower() or 
-            query.lower() in str(item['fiyat']).lower()):
-            tmo_results.append({
-                'type': 'tmo',
-                'title': item['urun'],
-                'content': f"Birim: {item['birim']}, Fiyat: {item['fiyat']} TL",
-                'date': item.get('tarih', '')
-            })
+    # Sonuçları tarihe göre sırala (tarihi olanlar için)
+    results.sort(key=lambda x: x.get('date', ''), reverse=True)
     
-    # Haberlerde ara
-    news_results = []
-    for item in news_data:
-        if (query.lower() in item['title'].lower() or 
-            query.lower() in item['content'].lower()):
-            news_results.append({
-                'type': 'news',
-                'title': item['title'],
-                'content': item['content'],
-                'date': item['date'],
-                'link': item['link']
-            })
-    
-    # Sonuçları birleştir ve tarihe göre sırala
-    all_results = tmo_results + news_results
-    all_results.sort(key=lambda x: x['date'] if x['date'] else '', reverse=True)
-    
-    return render_template('arama.html', results=all_results, query=query)
+    return render_template('arama.html', results=results, query=query)
 
 @app.route('/borsa')
 def borsa():
@@ -677,6 +755,81 @@ def news_api():
     """Haber verilerini JSON olarak döndürür."""
     news_data = get_news()
     return jsonify(news_data)
+
+@app.route('/api/search')
+def api_search():
+    query = request.args.get('q', '').strip()
+    if not query or len(query) < 2:
+        return jsonify([])
+
+    # Arama sorgusunu normalize et
+    normalized_query = normalize_text(query)
+    results = []
+    
+    try:
+        # Arama indeksini oluştur veya yükle
+        arama_indeksi = _olustur_arama_indeksi()
+        
+        # Bitkilerde ara
+        for item in arama_indeksi.get('bitkiler', []):
+            normalized_title = normalize_text(item['title'])
+            normalized_description = normalize_text(item.get('description', ''))
+            normalized_keywords = [normalize_text(k) for k in item.get('keywords', [])]
+
+            if (normalized_query in normalized_title or 
+                normalized_query in normalized_description or
+                any(normalized_query in k for k in normalized_keywords)):
+                results.append({
+                    'type': 'bitki',
+                    'title': item['title'],
+                    'content': item.get('description', ''),
+                    'link': item['link'],
+                    'icon': item['icon']
+                })
+
+        # Hastalıklarda ara
+        for item in arama_indeksi.get('hastaliklar', []):
+            normalized_title = normalize_text(item['title'])
+            normalized_description = normalize_text(item.get('description', ''))
+            normalized_keywords = [normalize_text(k) for k in item.get('keywords', [])]
+            
+            if (normalized_query in normalized_title or 
+                normalized_query in normalized_description or
+                any(normalized_query in k for k in normalized_keywords)):
+                results.append({
+                    'type': 'hastalik',
+                    'title': item['title'],
+                    'content': item.get('description', ''),
+                    'link': item['link'],
+                    'icon': item['icon']
+                })
+
+        # İlaçlarda ara
+        for item in arama_indeksi.get('ilaclar', []):
+            normalized_title = normalize_text(item['title'])
+            normalized_description = normalize_text(item.get('description', ''))
+            normalized_keywords = [normalize_text(k) for k in item.get('keywords', [])]
+
+            if (normalized_query in normalized_title or 
+                normalized_query in normalized_description or
+                any(normalized_query in k for k in normalized_keywords)):
+                results.append({
+                    'type': 'ilac',
+                    'title': item['title'],
+                    'content': item.get('description', ''),
+                    'link': item['link'],
+                    'icon': item['icon']
+                })
+
+        # Sonuçları türe ve sonra başlığa göre sırala
+        results.sort(key=lambda x: (x.get('type', ''), x.get('title', '')))
+        
+        return jsonify(results)
+
+    except Exception as e:
+        print(f"Arama hatası: {str(e)}")
+        # Hata durumunda boş sonuç döndür
+        return jsonify([])
 
 if __name__ == '__main__':
     app.run(debug=True, port=8501)

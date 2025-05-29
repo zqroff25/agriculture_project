@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arama Sonuçları - FarMate</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Nav Bar -->
+    <div class="fixed top-0 w-full bg-white shadow-sm z-50">
+        <div class="flex items-center justify-between px-4 py-3">
+            <a href="/" class="flex items-center space-x-2">
+                <i class="ri-arrow-left-line text-gray-600"></i>
+                <span class="text-xl font-semibold text-gray-800">farmate</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Ana İçerik -->
+    <div class="pt-16 pb-16 px-4">
+        <!-- Arama Formu -->
+        <div class="max-w-2xl mx-auto mb-6">
+            <form action="/arama" method="GET" class="relative">
+                <div class="relative">
+                    <input type="text" 
+                           name="q" 
+                           value="{{ query }}"
+                           class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:outline-none transition-colors" 
+                           placeholder="Bitki, hastalık veya ilaç türü ara..."
+                           autocomplete="off">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="ri-search-line text-gray-400"></i>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sonuçlar -->
+        <div class="max-w-2xl mx-auto">
+            {% if query %}
+                <h2 class="text-lg font-semibold text-gray-800 mb-4">
+                    "{{ query }}" için arama sonuçları
+                </h2>
+            {% endif %}
+
+            {% if results %}
+                <div class="space-y-4">
+                    {% for result in results %}
+                        <a href="{{ result.link if result.link else '#' }}" 
+                           class="block bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow">
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 flex items-center justify-center text-primary flex-shrink-0">
+                                    {% if result.type == 'bitki' %}
+                                        <i class="ri-plant-line text-xl"></i>
+                                    {% elif result.type == 'hastalik' %}
+                                        <i class="ri-virus-line text-xl"></i>
+                                    {% elif result.type == 'ilac' %}
+                                        <i class="ri-medicine-bottle-line text-xl"></i>
+                                    {% elif result.type == 'tmo' %}
+                                        <i class="ri-money-dollar-circle-line text-xl"></i>
+                                    {% elif result.type == 'news' %}
+                                        <i class="ri-newspaper-line text-xl"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <h3 class="text-sm font-medium text-gray-800">{{ result.title }}</h3>
+                                    <p class="text-xs text-gray-600 mt-1">{{ result.content }}</p>
+                                    {% if result.date %}
+                                        <span class="text-xs text-gray-500 mt-2 block">{{ result.date }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {% if query %}
+                    <div class="text-center py-8">
+                        <i class="ri-search-line text-4xl text-gray-400 mb-2"></i>
+                        <p class="text-gray-600">Sonuç bulunamadı</p>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html> 
