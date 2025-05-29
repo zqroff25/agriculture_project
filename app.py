@@ -600,19 +600,59 @@ def _olustur_arama_indeksi() -> Dict[str, List[Dict[str, Any]]]:
     _bitki_arama_indeksi = indeks
     return indeks
 
-@app.route('/api/search')
-def search():
-    # API'ye gönderilecek sorgu parametrelerini al
+@app.route('/arama')
+def arama():
     query = request.args.get('q', '')
-    categories = request.args.getlist('categories') # Birden fazla kategori seçilebilir
-
     if not query:
-        return jsonify([]) # Boş sorguda boş sonuç döndür
-
-    # Arama fonksiyonunu çağır
-    results = _arama(query, categories)
-
-    return jsonify(results)
+        return render_template('arama.html', results=[], query='')
+    
+    # TMO verilerini oku
+    tmo_data = []
+    try:
+        with open('data/tmo_data.json', 'r', encoding='utf-8') as f:
+            tmo_data = json.load(f)
+    except:
+        pass
+    
+    # Haberleri oku
+    news_data = []
+    try:
+        with open('data/news_data.json', 'r', encoding='utf-8') as f:
+            news_data = json.load(f)
+    except:
+        pass
+    
+    # TMO verilerinde ara
+    tmo_results = []
+    for item in tmo_data:
+        if (query.lower() in item['urun'].lower() or 
+            query.lower() in item['birim'].lower() or 
+            query.lower() in str(item['fiyat']).lower()):
+            tmo_results.append({
+                'type': 'tmo',
+                'title': item['urun'],
+                'content': f"Birim: {item['birim']}, Fiyat: {item['fiyat']} TL",
+                'date': item.get('tarih', '')
+            })
+    
+    # Haberlerde ara
+    news_results = []
+    for item in news_data:
+        if (query.lower() in item['title'].lower() or 
+            query.lower() in item['content'].lower()):
+            news_results.append({
+                'type': 'news',
+                'title': item['title'],
+                'content': item['content'],
+                'date': item['date'],
+                'link': item['link']
+            })
+    
+    # Sonuçları birleştir ve tarihe göre sırala
+    all_results = tmo_results + news_results
+    all_results.sort(key=lambda x: x['date'] if x['date'] else '', reverse=True)
+    
+    return render_template('arama.html', results=all_results, query=query)
 
 @app.route('/borsa')
 def borsa():
