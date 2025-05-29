@@ -607,7 +607,7 @@ def _olustur_arama_indeksi() -> Dict[str, List[Dict[str, Any]]]:
                 'title': hastalik.get('isim', ''),
                 'description': hastalik.get('aciklama', ''),
                 'icon': 'ri-virus-line',
-                'link': f'/detay/{bitki_adi}/{turkce_karakter_duzelt(hastalik.get('isim', ''))}', # Link düzeltildi
+                'link': f"/detay/{bitki_adi}/{turkce_karakter_duzelt(hastalik.get('isim', ''))}", # Link düzeltildi
                 'keywords': [normalize_text(hastalik.get('isim', ''))] + 
                            [normalize_text(bitki.get('isim', ''))] +
                            [normalize_text(b) for b in hastalik.get('belirtiler', [])] +
