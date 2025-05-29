@@ -1,19 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
+from config import NEWS_URL, SCRAPER_TIMEOUT, NEWS_CACHE_DURATION
 
 NEWS_CACHE_FILE = 'data/news_cache.json'
-NEWS_CACHE_DURATION_DAYS = 7  # 1 hafta önbellek süresi
 
 def scrape_news():
     """Tarım ve Orman Bakanlığı haber arşivinden haberleri çeker ve JSON dosyasına kaydeder."""
     news_list = []
-    url = 'https://www.tarimorman.gov.tr/HaberArsivi'
 
     try:
-        response = requests.get(url, timeout=30)
+        response = requests.get(NEWS_URL, timeout=SCRAPER_TIMEOUT)
         response.raise_for_status()
 
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -67,13 +66,19 @@ def scrape_news():
 
         return news_list
 
-    except Exception as e:
+    except requests.Timeout:
+        print("Haber verileri alınırken zaman aşımı oluştu")
+        return None
+    except requests.RequestException as e:
         print(f"Haber verileri alınamadı: {e}")
+        return None
+    except Exception as e:
+        print(f"Beklenmeyen hata: {e}")
         return None
 
 def get_news():
     """Haber verilerini önbellekten veya scraping ile alır."""
-    cache_data = None  # cache_data'yı başlangıçta None olarak tanımla
+    cache_data = None
     
     # Önbellek dosyası var mı kontrol et
     if os.path.exists(NEWS_CACHE_FILE):
@@ -86,16 +91,18 @@ def get_news():
                 if timestamp_str:
                     cache_timestamp = datetime.fromisoformat(timestamp_str)
                     # Önbellek süresi dolmuş mu kontrol et
-                    if datetime.now() - cache_timestamp < timedelta(days=NEWS_CACHE_DURATION_DAYS):
+                    if datetime.now() - cache_timestamp < NEWS_CACHE_DURATION:
                         return cache_data
         except Exception as e:
             print(f"Haber önbellek dosyası okunamadı: {e}")
-            cache_data = None  # Hata durumunda cache_data'yı None yap
+            cache_data = None
     
     # Önbellek yok veya süresi dolmuşsa yeni veri çek
     # Sadece Pazartesi günleri scraping yap
     if datetime.now().weekday() == 0:  # Pazartesi = 0
-        return scrape_news()
+        new_data = scrape_news()
+        if new_data is not None:
+            return new_data
     elif cache_data is not None:  # Pazartesi değilse ve eski veri varsa onu kullan
         return cache_data
     return []  # Hiç veri yoksa boş liste döndür

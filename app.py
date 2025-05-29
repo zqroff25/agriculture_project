@@ -8,6 +8,10 @@ from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 from scrapers.tmo_scraper import get_tmo_prices
 from scrapers.news_scraper import get_news
+from config import (
+    OPENWEATHER_API_KEY, EXCHANGE_RATE_API_URL, EUR_EXCHANGE_RATE_API_URL,
+    API_TIMEOUT, CURRENCY_CACHE_DURATION
+)
 
 app = Flask(__name__, static_folder='static')
 
@@ -78,7 +82,65 @@ bitkiler = {
     # Diğer bitkiler de benzer şekilde eklenebilir
 }
 
-OPENWEATHER_API_KEY = 'a6d5a4f3356cd42bd0014cb967b5f0e5'
+def get_currency_rates():
+    """Para birimi verilerini çeker ve önbelleğe alır."""
+    global _currency_cache, _currency_cache_time
+    
+    # Önbellekteki veri hala geçerli mi kontrol et
+    if _currency_cache is not None and _currency_cache_time is not None:
+        if datetime.now() - _currency_cache_time < CURRENCY_CACHE_DURATION:
+            return _currency_cache
+    
+    try:
+        # ExchangeRate-API'den veri çek
+        response = requests.get(EXCHANGE_RATE_API_URL, timeout=API_TIMEOUT)
+        data = response.json()
+        
+        if data['result'] == 'success':
+            # TRY kuru
+            try_rate = data['rates']['TRY']
+            
+            # Euro kuru için ayrı bir istek
+            eur_response = requests.get(EUR_EXCHANGE_RATE_API_URL, timeout=API_TIMEOUT)
+            eur_data = eur_response.json()
+            eur_rate = eur_data['rates']['TRY'] if eur_data['result'] == 'success' else None
+            
+            # Altın fiyatı için ayrı bir API (örnek olarak)
+            gold_price = try_rate * 0.0005  # Örnek hesaplama
+            
+            # Değişim oranları (örnek veriler)
+            usd_change = round((try_rate - 31.5) / 31.5 * 100, 2)
+            eur_change = round((eur_rate - 34.2) / 34.2 * 100, 2) if eur_rate else 0
+            gold_change = round((gold_price - 1950) / 1950 * 100, 2)
+            
+            _currency_cache = {
+                'usd': {'price': try_rate, 'change': usd_change},
+                'eur': {'price': eur_rate, 'change': eur_change},
+                'gold': {'price': gold_price, 'change': gold_change}
+            }
+            _currency_cache_time = datetime.now()
+            
+            return _currency_cache
+            
+    except requests.Timeout:
+        print("Para birimi verileri alınırken zaman aşımı oluştu")
+        if _currency_cache is not None:
+            return _currency_cache
+    except requests.RequestException as e:
+        print(f"Para birimi verileri alınamadı: {e}")
+        if _currency_cache is not None:
+            return _currency_cache
+    except Exception as e:
+        print(f"Beklenmeyen hata: {e}")
+        if _currency_cache is not None:
+            return _currency_cache
+    
+    # Hata durumunda örnek veriler
+    return {
+        'usd': {'price': 31.50, 'change': 0.5},
+        'eur': {'price': 34.20, 'change': -0.3},
+        'gold': {'price': 1950.00, 'change': 1.2}
+    }
 
 # Arama verileri
 arama_verileri = {
@@ -234,7 +296,7 @@ def render_index():
         sehir = 'Ankara'
     # OpenWeatherMap ile hava durumu bilgisini al
     try:
-        weather_url = f'https://api.openweathermap.org/data/2.5/weather?q={sehir}&appid={"a6d5a4f3356cd42bd0014cb967b5f0e5"}&units=metric&lang=tr'
+        weather_url = f'https://api.openweathermap.org/data/2.5/weather?q={sehir}&appid={OPENWEATHER_API_KEY}&units=metric&lang=tr'
         weather_data = requests.get(weather_url).json()
         sicaklik = int(weather_data['main']['temp'])
         durum = weather_data['weather'][0]['description'].capitalize()
@@ -557,56 +619,6 @@ def borsa():
     # Tarım borsası verilerini şablona gönder
     commodity_prices = get_tmo_prices()
     return render_template('borsa.html', commodity_prices=commodity_prices)
-
-def get_currency_rates():
-    """Para birimi verilerini çeker ve önbelleğe alır."""
-    global _currency_cache, _currency_cache_time
-    
-    # Önbellekteki veri hala geçerli mi kontrol et
-    if _currency_cache is not None and _currency_cache_time is not None:
-        if datetime.now() - _currency_cache_time < CACHE_DURATION:
-            return _currency_cache
-    
-    try:
-        # ExchangeRate-API'den veri çek (ücretsiz API)
-        response = requests.get('https://open.er-api.com/v6/latest/USD')
-        data = response.json()
-        
-        if data['result'] == 'success':
-            # TRY kuru
-            try_rate = data['rates']['TRY']
-            
-            # Euro kuru için ayrı bir istek
-            eur_response = requests.get('https://open.er-api.com/v6/latest/EUR')
-            eur_data = eur_response.json()
-            eur_rate = eur_data['rates']['TRY'] if eur_data['result'] == 'success' else None
-            
-            # Altın fiyatı için ayrı bir API (örnek olarak)
-            # Not: Gerçek uygulamada güvenilir bir altın API'si kullanılmalıdır
-            gold_price = try_rate * 0.0005  # Örnek hesaplama
-            
-            # Değişim oranları (örnek veriler)
-            # Gerçek uygulamada geçmiş verilerden hesaplanmalıdır
-            usd_change = round((try_rate - 31.5) / 31.5 * 100, 2)  # Örnek değişim
-            eur_change = round((eur_rate - 34.2) / 34.2 * 100, 2) if eur_rate else 0
-            gold_change = round((gold_price - 1950) / 1950 * 100, 2)  # Örnek değişim
-            
-            _currency_cache = {
-                'usd': {'price': try_rate, 'change': usd_change},
-                'eur': {'price': eur_rate, 'change': eur_change},
-                'gold': {'price': gold_price, 'change': gold_change}
-            }
-            _currency_cache_time = datetime.now()
-            
-            return _currency_cache
-    except Exception as e:
-        print(f"Para birimi verileri alınamadı: {e}")
-        # Hata durumunda örnek veriler
-        return {
-            'usd': {'price': 31.50, 'change': 0.5},
-            'eur': {'price': 34.20, 'change': -0.3},
-            'gold': {'price': 1950.00, 'change': 1.2}
-        }
 
 @app.route('/api/currency-rates')
 def currency_rates():

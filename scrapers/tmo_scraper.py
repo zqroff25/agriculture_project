@@ -1,17 +1,17 @@
 import requests
 from bs4 import BeautifulSoup
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
+from config import TMO_URL, SCRAPER_TIMEOUT, TMO_CACHE_DURATION
 
 TMO_CACHE_FILE = 'data/tmo_prices.json'
-CACHE_DURATION_DAYS = 1  # 1 gün önbellek süresi
 
 def scrape_tmo_prices():
     """TMO fiyat listesini çeker ve JSON dosyasına kaydeder."""
     try:
         # TMO'nun günlük fiyat listesi sayfası
-        response = requests.get('https://www.tmo.gov.tr/tr/fiyat-listesi', timeout=30)
+        response = requests.get(TMO_URL, timeout=SCRAPER_TIMEOUT)
         response.raise_for_status()
         
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -102,12 +102,20 @@ def scrape_tmo_prices():
             
         return commodity_data
         
-    except Exception as e:
+    except requests.Timeout:
+        print("TMO verileri alınırken zaman aşımı oluştu")
+        return None
+    except requests.RequestException as e:
         print(f"TMO verileri alınamadı: {e}")
+        return None
+    except Exception as e:
+        print(f"Beklenmeyen hata: {e}")
         return None
 
 def get_tmo_prices():
     """TMO fiyat verilerini önbellekten veya scraping ile alır."""
+    cache_data = None
+    
     # Önbellek dosyası var mı kontrol et
     if os.path.exists(TMO_CACHE_FILE):
         try:
@@ -119,13 +127,19 @@ def get_tmo_prices():
                 if timestamp_str:
                     cache_timestamp = datetime.fromisoformat(timestamp_str)
                     # Önbellek süresi dolmuş mu kontrol et
-                    if datetime.now() - cache_timestamp < timedelta(days=CACHE_DURATION_DAYS):
+                    if datetime.now() - cache_timestamp < TMO_CACHE_DURATION:
                         return cache_data
         except Exception as e:
             print(f"TMO önbellek dosyası okunamadı: {e}")
+            cache_data = None
     
     # Önbellek yok veya süresi dolmuşsa yeni veri çek
-    return scrape_tmo_prices()
+    new_data = scrape_tmo_prices()
+    if new_data is not None:
+        return new_data
+    elif cache_data is not None:
+        return cache_data
+    return {}  # Hiç veri yoksa boş sözlük döndür
 
 if __name__ == '__main__':
     # Test için scraper'ı çalıştır
