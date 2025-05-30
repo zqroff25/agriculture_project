@@ -534,6 +534,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchResultsList = document.getElementById('searchResultsList');
     let searchTimeout;
 
+    // Sayfa değişiminde arama kutusunu temizle
+    window.addEventListener('beforeunload', function() {
+        searchInput.value = '';
+        searchResults.classList.add('hidden');
+    });
+
     // Arama input değişikliği
     searchInput.addEventListener('input', (e) => {
         clearTimeout(searchTimeout);
@@ -562,6 +568,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             const resultElement = document.createElement('a');
                             resultElement.href = result.link || '#';
                             resultElement.className = 'block p-4 hover:bg-gray-50 transition-colors';
+                            resultElement.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                window.location.href = this.href;
+                            });
 
                             const iconMap = {
                                 'bitki': 'ri-plant-line',

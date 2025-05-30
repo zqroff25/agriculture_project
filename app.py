@@ -364,44 +364,65 @@ def bitki_detay(bitki_adi):
 
 @app.route('/detay/<bitki_adi>/<item_adi>')
 def detay_sayfasi(bitki_adi, item_adi):
-    # Türkçe karakterleri düzelt
-    dosya_adi = turkce_karakter_duzelt(bitki_adi)
-    # Bitki verilerini yükle
-    with open(f'bitki_veri/{dosya_adi}.json', 'r', encoding='utf-8') as f:
-        bitki = json.load(f)
-    
-    # İtemi bul (hastalık, herbisit veya insektisit olabilir)
-    item = None
-    item_type = None
-    
-    # Hastalıkları kontrol et
-    for h in bitki.get('hastaliklar', []):
-        if h['isim'] == item_adi:
-            item = h
-            item_type = 'hastalik'
-            break
-    
-    # Eğer bulunamazsa herbisitleri kontrol et
-    if item is None:
-        for herbisit in bitki.get('herbisitler', []):
-            if herbisit['isim'] == item_adi:
-                item = herbisit
-                item_type = 'herbisit'
-                break
-    
-    # Eğer hala bulunamazsa insektisitleri kontrol et
-    if item is None:
-        for insektisit in bitki.get('insektisitler', []):
-            if insektisit['isim'] == item_adi:
-                item = insektisit
-                item_type = 'insektisit'
-                break
+    try:
+        # Türkçe karakterleri düzelt
+        dosya_adi = turkce_karakter_duzelt(bitki_adi)
+        dosya_yolu = f'bitki_veri/{dosya_adi}.json'
+        
+        if not os.path.exists(dosya_yolu):
+            return render_template('hata.html', 
+                baslik="Bitki Bulunamadı",
+                mesaj=f"'{bitki_adi}' bitkisi için detay bilgisi bulunamadı.",
+                geri_link="/"
+            ), 404
 
+        # Bitki verilerini yükle
+        with open(dosya_yolu, 'r', encoding='utf-8') as f:
+            bitki = json.load(f)
+        
+        # İtemi bul (hastalık, herbisit veya insektisit olabilir)
+        item = None
+        item_type = None
+        
+        # Hastalıkları kontrol et
+        for h in bitki.get('hastaliklar', []):
+            if turkce_karakter_duzelt(h['isim']) == turkce_karakter_duzelt(item_adi):
+                item = h
+                item_type = 'hastalik'
+                break
+        
+        # Eğer bulunamazsa herbisitleri kontrol et
+        if item is None:
+            for herbisit in bitki.get('herbisitler', []):
+                if turkce_karakter_duzelt(herbisit['isim']) == turkce_karakter_duzelt(item_adi):
+                    item = herbisit
+                    item_type = 'herbisit'
+                    break
+        
+        # Eğer hala bulunamazsa insektisitleri kontrol et
+        if item is None:
+            for insektisit in bitki.get('insektisitler', []):
+                if turkce_karakter_duzelt(insektisit['isim']) == turkce_karakter_duzelt(item_adi):
+                    item = insektisit
+                    item_type = 'insektisit'
+                    break
+        
+        if item is None:
+            return render_template('hata.html',
+                baslik="Detay Bulunamadı",
+                mesaj=f"'{item_adi}' için detay bilgisi bulunamadı. Lütfen bitki sayfasından ilgili detaya erişmeyi deneyin.",
+                geri_link=f"/bitki/{bitki_adi}"
+            ), 404
+        
+        return render_template('hastalik_detay.html', bitki=bitki, item=item, item_type=item_type)
     
-    if item is None:
-        return "Detay bulunamadı", 404
-    
-    return render_template('hastalik_detay.html', bitki=bitki, item=item, item_type=item_type)
+    except Exception as e:
+        print(f"Detay sayfası hatası: {str(e)}")
+        return render_template('hata.html',
+            baslik="Bir Hata Oluştu",
+            mesaj="Detay sayfası yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
+            geri_link="/"
+        ), 500
 
 from flask import send_from_directory
 
